@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  username  String @unique
+  email     String @unique
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+
+  projects           Project[]
+  projectMemberships ProjectMembership[]
+  versions           Version[]
+  changes            Change[]
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  createdAt   DateTime @default(now()) @map("created_at")
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById Int      @map("created_by_id")
+
+  projectMemberships ProjectMembership[]
+  files              File[]
+}
+
+model ProjectMembership {
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int     @map("user_id")
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId Int     @map("project_id")
+
+  @@id([userId, projectId])
+}
+
+model File {
+  id           Int      @id @default(autoincrement())
+  path         String   @unique
+  content      String
+  project      Project  @relation(fields: [projectId], references: [id])
+  projectId    Int      @map("project_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  lastModified DateTime @updatedAt @map("last_modified")
+
+  versions Version[] @relation(name: "file")
+}
+
+model Version {
+  id            Int      @id @default(autoincrement())
+  versionNumber Int
+  createdAt     DateTime @default(now()) @map("created_at")
+  committedBy   User     @relation(fields: [committedById], references: [id])
+  committedById Int      @map("committed_by_id")
+  file          File     @relation(name: "file", fields: [fileId], references: [id])
+  fileId        Int      @map("file_id")
+
+  changes Change[]
+
+  @@unique([fileId, versionNumber])
+}
+
+model Change {
+  id         Int     @id @default(autoincrement())
+  operation  String
+  lineNumber Int     @map("line_number")
+  position   Int
+  content    String
+  madeBy     User    @relation(fields: [madeById], references: [id])
+  madeById   Int     @map("made_by_id")
+  version    Version @relation(fields: [versionId], references: [id])
+  versionId  Int     @map("version_id")
+}
