@@ -1,0 +1,78 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ContributionStats {
+  contributorId: Int!
+  contributions: Int!
+}
+
+type User {
+  id: Int!
+  username: String!
+  email: String!
+  lastName: String!
+  firstName: String!
+}
+
+type Change {
+  id: Int!
+  versionId: Int!
+  madeBy: User!
+  content: String!
+  lineNumber: Int!
+  position: Int!
+  operation: String!
+}
+
+type Version {
+  id: Int!
+  createdAt: DateTime!
+  committedBy: User!
+  changes: [Change!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type File {
+  id: Int!
+  path: String!
+
+  """File size in bytes"""
+  size: Int
+  createdAt: DateTime!
+  lastModified: DateTime!
+  versions: [Version!]!
+}
+
+type FileMeta {
+  id: Int!
+  path: String!
+
+  """File size in bytes"""
+  size: Int
+  createdAt: DateTime!
+  lastModified: DateTime!
+  versions: [Version!]!
+  contributorIds: [Int!]!
+  contributionStats: [ContributionStats!]!
+}
+
+type Project {
+  id: Int!
+  name: String!
+  createdAt: DateTime!
+  createdBy: User!
+  members: [User!]!
+}
+
+type Query {
+  listFiles(projectId: Int!): [File!]!
+  getFileMeta(fileId: Int!): FileMeta!
+  getFileContent(fileId: Int!): String!
+  getFileVersions(fileId: Int!): [Version!]!
+  getProject(id: Int!): Project!
+}

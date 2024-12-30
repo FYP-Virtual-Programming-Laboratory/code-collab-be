@@ -73,7 +73,7 @@ async function main() {
     update: {},
     create: {
       path: 'main.js',
-      content: '',
+      content: 'console.log("Hello, World!");',
       projectId: project.id,
     },
   });
