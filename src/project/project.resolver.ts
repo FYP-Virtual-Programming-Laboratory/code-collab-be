@@ -1,5 +1,7 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { GraphQLError } from 'graphql';
 import { CreateProjectArgs } from './dtos/create-project.args';
+import { UpdateProjectArgs } from './dtos/update-project.args';
 import { Project } from './models/project.model';
 import { ProjectService } from './project.service';
 
@@ -37,5 +39,34 @@ export class ProjectResolver {
       name,
       memberIds,
     );
+  }
+
+  @Mutation(() => Boolean)
+  async updateProject(@Args() { id, sessionId, name }: UpdateProjectArgs) {
+    if (!id && !sessionId) {
+      throw new GraphQLError('Either `id` or `sessionId` must be provided.', {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+        },
+      });
+    }
+
+    return this.projectService.updateProject(id || sessionId, { name });
+  }
+
+  @Mutation(() => Boolean)
+  async addProjectMember(
+    @Args('projectId', { type: () => Int }) projectId: number,
+    @Args('userId', { type: () => Int }) userId: number,
+  ) {
+    return this.projectService.addMember(projectId, userId);
+  }
+
+  @Mutation(() => Boolean)
+  async removeProjectMember(
+    @Args('projectId', { type: () => Int }) projectId: number,
+    @Args('userId', { type: () => Int }) userId: number,
+  ) {
+    return this.projectService.removeMember(projectId, userId);
   }
 }

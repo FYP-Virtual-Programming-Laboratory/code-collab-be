@@ -121,4 +121,18 @@ type Mutation {
     """
     memberIds: [Int!]
   ): Project!
+  updateProject(
+    """
+    The ID of the project to update. Must be present if `sessionId` is not.
+    """
+    id: Int
+
+    """
+    The session ID of the project to update. Must be present if `id` is not.
+    """
+    sessionId: String
+    name: String!
+  ): Boolean!
+  addProjectMember(projectId: Int!, userId: Int!): Boolean!
+  removeProjectMember(projectId: Int!, userId: Int!): Boolean!
 }
