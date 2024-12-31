@@ -75,4 +75,6 @@ type Query {
   getFileContent(fileId: Int!): String!
   getFileVersions(fileId: Int!): [Version!]!
   getProject(id: Int!): Project!
+  getUser(id: Int!): User!
+  getUsers(ids: [Int!]!): [User!]!
 }
