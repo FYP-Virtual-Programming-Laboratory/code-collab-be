@@ -1,4 +1,5 @@
-import { Args, Int, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreateProjectArgs } from './dtos/create-project.args';
 import { Project } from './models/project.model';
 import { ProjectService } from './project.service';
 
@@ -22,5 +23,19 @@ export class ProjectResolver {
   })
   async getProjectBySessionId(@Args('sessionId') sessionId: string) {
     return this.projectService.getProjectBySessionId(sessionId);
+  }
+
+  @Mutation(() => Project, {
+    description: 'Create a new project.',
+  })
+  async createProject(
+    @Args() { sessionId, creatorId, name, memberIds }: CreateProjectArgs,
+  ) {
+    return this.projectService.createProject(
+      sessionId,
+      creatorId,
+      name,
+      memberIds,
+    );
   }
 }

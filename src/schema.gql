@@ -108,3 +108,17 @@ type Query {
   """Find multiple users by their `id`s. Returns only the users it finds."""
   getUsers(ids: [Int!]!): [User!]!
 }
+
+type Mutation {
+  """Create a new project."""
+  createProject(
+    sessionId: String!
+    creatorId: Int!
+    name: String!
+
+    """
+    List of user IDs to add to the project. The creator id may not be added.
+    """
+    memberIds: [Int!]
+  ): Project!
+}
