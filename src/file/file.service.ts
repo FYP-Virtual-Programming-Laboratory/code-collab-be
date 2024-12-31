@@ -37,6 +37,10 @@ export class FileService {
       },
     });
 
+    if (!file) {
+      return null;
+    }
+
     const contributorMap = new Map<number, number>();
 
     file.versions.forEach((version) => {
@@ -73,6 +77,10 @@ export class FileService {
         content: true,
       },
     });
+
+    if (!file) {
+      return null;
+    }
 
     return file.content;
   }

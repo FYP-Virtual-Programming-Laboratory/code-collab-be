@@ -70,9 +70,24 @@ type Project {
 }
 
 type Query {
+  """
+  List all files in a project. Returns an empty array if no files are found or if project does not exist.
+  """
   listFiles(projectId: Int!): [File!]!
-  getFileMeta(fileId: Int!): FileMeta!
-  getFileContent(fileId: Int!): String!
+
+  """
+  Get file metadata by file `id`. Returns `null` if file with the id does not exist.
+  """
+  getFileMeta(fileId: Int!): FileMeta
+
+  """
+  Get file content by file `id`. Returns `null` if file with the id does not exist.
+  """
+  getFileContent(fileId: Int!): String
+
+  """
+  Get all versions of a file by file `id`. Returns an empty array if file with the id does not exist.
+  """
   getFileVersions(fileId: Int!): [Version!]!
 
   """
@@ -84,6 +99,12 @@ type Query {
   Find a project by its `sessionId`. If `null` is returned, then the project could not be found.
   """
   getProjectBySessionId(sessionId: String!): Project
-  getUser(id: Int!): User!
+
+  """
+  Find a user by `id`. Returns null if user with specified `id` cannot be found.
+  """
+  getUser(id: Int!): User
+
+  """Find multiple users by their `id`s. Returns only the users it finds."""
   getUsers(ids: [Int!]!): [User!]!
 }
