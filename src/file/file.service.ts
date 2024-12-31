@@ -11,9 +11,6 @@ export class FileService {
       where: {
         projectId,
       },
-      include: {
-        project: true,
-      },
     });
 
     return files.map((file) => ({
