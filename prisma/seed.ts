@@ -36,6 +36,7 @@ async function main() {
     create: {
       name: 'My Project',
       createdById: farayolaj.id,
+      sessionId: '123456',
     },
   });
 
