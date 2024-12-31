@@ -74,7 +74,16 @@ type Query {
   getFileMeta(fileId: Int!): FileMeta!
   getFileContent(fileId: Int!): String!
   getFileVersions(fileId: Int!): [Version!]!
-  getProject(id: Int!): Project!
+
+  """
+  Find a project by its `id`. If `null` is returned, then the project could not be found.
+  """
+  getProject(id: Int!): Project
+
+  """
+  Find a project by its `sessionId`. If `null` is returned, then the project could not be found.
+  """
+  getProjectBySessionId(sessionId: String!): Project
   getUser(id: Int!): User!
   getUsers(ids: [Int!]!): [User!]!
 }
