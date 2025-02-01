@@ -9,6 +9,9 @@ export class File {
   @Field()
   path: string;
 
+  @Field()
+  content: string;
+
   @Field((type) => Int, {
     description: 'File size in bytes',
     nullable: true,

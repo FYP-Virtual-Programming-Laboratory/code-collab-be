@@ -40,6 +40,7 @@ scalar DateTime
 type File {
   id: Int!
   path: String!
+  content: String!
 
   """File size in bytes"""
   size: Int
@@ -51,6 +52,7 @@ type File {
 type FileMeta {
   id: Int!
   path: String!
+  content: String!
 
   """File size in bytes"""
   size: Int
