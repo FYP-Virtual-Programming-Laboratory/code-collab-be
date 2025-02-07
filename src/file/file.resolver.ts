@@ -1,4 +1,5 @@
-import { Args, Int, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { NewFileArgs } from './dtos/new-file.args';
 import { FileService } from './file.service';
 import { FileMeta } from './models/file-meta.model';
 import { File } from './models/file.model';
@@ -7,6 +8,13 @@ import { Version } from './models/version.model';
 @Resolver(() => File)
 export class FileResolver {
   constructor(private filesService: FileService) {}
+
+  @Mutation(() => File, {
+    description: 'Create a new file. Returns the new file',
+  })
+  async newFile(@Args() { filePath, projectId, initialContent }: NewFileArgs) {
+    return this.filesService.createFile(projectId, filePath, initialContent);
+  }
 
   @Query(() => [File], {
     description:

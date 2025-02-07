@@ -6,6 +6,24 @@ import { PrismaService } from '../prisma/prisma.service';
 export class FileService {
   constructor(private prisma: PrismaService) {}
 
+  async createFile(
+    projectId: number,
+    path: string,
+    initialContent: string | null,
+  ) {
+    return await this.prisma.file.create({
+      data: {
+        path,
+        content: initialContent ?? '',
+        project: {
+          connect: {
+            id: projectId,
+          },
+        },
+      },
+    });
+  }
+
   async listFiles(projectId: number) {
     const files = await this.prisma.file.findMany({
       where: {
