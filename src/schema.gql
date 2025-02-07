@@ -7,6 +7,28 @@ type ContributionStats {
   contributions: Int!
 }
 
+type Contributions {
+  contributorIds: [Int!]!
+  contributionStats: [ContributionStats!]!
+}
+
+type File {
+  id: Int!
+  path: String!
+  content: String!
+
+  """File size in bytes"""
+  size: Int
+  createdAt: DateTime!
+  lastModified: DateTime!
+  contributions: Contributions!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type User {
   id: Int!
   username: String!
@@ -32,37 +54,6 @@ type Version {
   changes: [Change!]!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type File {
-  id: Int!
-  path: String!
-  content: String!
-
-  """File size in bytes"""
-  size: Int
-  createdAt: DateTime!
-  lastModified: DateTime!
-  versions: [Version!]!
-}
-
-type FileMeta {
-  id: Int!
-  path: String!
-  content: String!
-
-  """File size in bytes"""
-  size: Int
-  createdAt: DateTime!
-  lastModified: DateTime!
-  versions: [Version!]!
-  contributorIds: [Int!]!
-  contributionStats: [ContributionStats!]!
-}
-
 type Project {
   id: Int!
   name: String!
@@ -76,16 +67,6 @@ type Query {
   List all files in a project. Returns an empty array if no files are found or if project does not exist.
   """
   listFiles(projectId: Int!): [File!]!
-
-  """
-  Get file metadata by file `id`. Returns `null` if file with the id does not exist.
-  """
-  getFileMeta(fileId: Int!): FileMeta
-
-  """
-  Get file content by file `id`. Returns `null` if file with the id does not exist.
-  """
-  getFileContent(fileId: Int!): String
 
   """
   Get all versions of a file by file `id`. Returns an empty array if file with the id does not exist.

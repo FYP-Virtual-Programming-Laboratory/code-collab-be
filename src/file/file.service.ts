@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Buffer } from 'buffer';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -31,18 +30,15 @@ export class FileService {
       },
     });
 
-    return files.map((file) => ({
-      ...file,
-      size: Buffer.byteLength(file.content, 'utf8'),
-    }));
+    return files;
   }
 
-  async getFileMeta(fileId: number) {
+  async getFileContributions(fileId: number) {
     const file = await this.prisma.file.findUnique({
       where: {
         id: fileId,
       },
-      include: {
+      select: {
         versions: {
           include: {
             changes: {
@@ -74,8 +70,6 @@ export class FileService {
     });
 
     return {
-      ...file,
-      size: Buffer.byteLength(file.content, 'utf8'),
       contributorIds: Array.from(contributorMap.keys()),
       contributionStats: Array.from(contributorMap.entries()).map(
         ([contributorId, contributions]) => ({
@@ -84,23 +78,6 @@ export class FileService {
         }),
       ),
     };
-  }
-
-  async getFileContent(fileId: number) {
-    const file = await this.prisma.file.findUnique({
-      where: {
-        id: fileId,
-      },
-      select: {
-        content: true,
-      },
-    });
-
-    if (!file) {
-      return null;
-    }
-
-    return file.content;
   }
 
   async getFileHistory(fileId: number) {

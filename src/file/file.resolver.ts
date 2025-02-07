@@ -1,13 +1,30 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { NewFileArgs } from './dtos/new-file.args';
 import { FileService } from './file.service';
-import { FileMeta } from './models/file-meta.model';
 import { File } from './models/file.model';
 import { Version } from './models/version.model';
 
 @Resolver(() => File)
 export class FileResolver {
   constructor(private filesService: FileService) {}
+
+  @ResolveField()
+  async size(@Parent() file: File) {
+    return Buffer.byteLength(file.content, 'utf8');
+  }
+
+  @ResolveField()
+  async contributions(@Parent() file: File) {
+    return this.filesService.getFileContributions(file.id);
+  }
 
   @Mutation(() => File, {
     description: 'Create a new file. Returns the new file',
@@ -22,24 +39,6 @@ export class FileResolver {
   })
   async listFiles(@Args('projectId', { type: () => Int }) projectId: number) {
     return this.filesService.listFiles(projectId);
-  }
-
-  @Query(() => FileMeta, {
-    nullable: true,
-    description:
-      'Get file metadata by file `id`. Returns `null` if file with the id does not exist.',
-  })
-  async getFileMeta(@Args('fileId', { type: () => Int }) fileId: number) {
-    return this.filesService.getFileMeta(fileId);
-  }
-
-  @Query(() => String, {
-    nullable: true,
-    description:
-      'Get file content by file `id`. Returns `null` if file with the id does not exist.',
-  })
-  async getFileContent(@Args('fileId', { type: () => Int }) fileId: number) {
-    return this.filesService.getFileContent(fileId);
   }
 
   @Query(() => [Version], {

@@ -1,9 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Version } from './version.model';
+import { Contributions } from './contributions';
 
 @ObjectType()
 export class File {
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Field()
@@ -12,7 +12,7 @@ export class File {
   @Field()
   content: string;
 
-  @Field((type) => Int, {
+  @Field(() => Int, {
     description: 'File size in bytes',
     nullable: true,
   })
@@ -24,6 +24,6 @@ export class File {
   @Field((type) => Date)
   lastModified: Date;
 
-  @Field((type) => [Version])
-  versions: Version[];
+  @Field(() => Contributions)
+  contributions: Contributions;
 }

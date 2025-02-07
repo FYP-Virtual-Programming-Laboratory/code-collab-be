@@ -1,9 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { ContributionStats } from './contribution-stat.model';
-import { File } from './file.model';
 
 @ObjectType()
-export class FileMeta extends File {
+export class Contributions {
   @Field(() => [Int])
   contributorIds: number[];
 
