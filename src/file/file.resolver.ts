@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { NewFileArgs } from './dtos/new-file.args';
+import { UpdateFileArgs } from './dtos/update-file.args';
 import { FileService } from './file.service';
 import { File } from './models/file.model';
 import { Version } from './models/version.model';
@@ -31,6 +32,13 @@ export class FileResolver {
   })
   async newFile(@Args() { filePath, projectId, initialContent }: NewFileArgs) {
     return this.filesService.createFile(projectId, filePath, initialContent);
+  }
+
+  @Mutation(() => File, {
+    description: "Update a file's content. Returns the file.",
+  })
+  async updateFile(@Args() { fileId, newContent }: UpdateFileArgs) {
+    return this.filesService.updateFile(fileId, newContent);
   }
 
   @Query(() => [File], {

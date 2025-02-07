@@ -23,6 +23,18 @@ export class FileService {
     });
   }
 
+  async updateFile(fileId: number, newContent: string) {
+    // Todo: update file version
+    return await this.prisma.file.update({
+      where: {
+        id: fileId,
+      },
+      data: {
+        content: newContent,
+      },
+    });
+  }
+
   async listFiles(projectId: number) {
     const files = await this.prisma.file.findMany({
       where: {

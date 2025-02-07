@@ -96,6 +96,9 @@ type Mutation {
   """Create a new file. Returns the new file"""
   newFile(projectId: Int!, filePath: String!, initialContent: String): File!
 
+  """Update a file's content. Returns the file."""
+  updateFile(fileId: Int!, newContent: String!): File!
+
   """Create a new project."""
   createProject(
     sessionId: String!
