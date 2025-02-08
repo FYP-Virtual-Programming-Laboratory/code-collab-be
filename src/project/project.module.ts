@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ProjectService } from './project.service';
 import { ProjectResolver } from './project.resolver';
+import { ProjectService } from './project.service';
 
 @Module({
-  providers: [ProjectService, ProjectResolver]
+  providers: [ProjectService, ProjectResolver],
+  exports: [ProjectService],
 })
 export class ProjectModule {}

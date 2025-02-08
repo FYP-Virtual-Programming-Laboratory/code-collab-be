@@ -7,7 +7,13 @@ export class Project {
   id: number;
 
   @Field()
+  sessionId: string;
+
+  @Field()
   name: string;
+
+  @Field()
+  yDocUpdates: string;
 
   @Field((type) => Date)
   createdAt: Date;

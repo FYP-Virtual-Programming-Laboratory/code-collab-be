@@ -2,6 +2,29 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: Int!
+  username: String!
+  email: String!
+  lastName: String!
+  firstName: String!
+}
+
+type Project {
+  id: Int!
+  sessionId: String!
+  name: String!
+  yDocUpdates: String!
+  createdAt: DateTime!
+  createdBy: User!
+  members: [User!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type ContributionStats {
   contributorId: Int!
   contributions: Int!
@@ -24,19 +47,6 @@ type File {
   contributions: Contributions!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type User {
-  id: Int!
-  username: String!
-  email: String!
-  lastName: String!
-  firstName: String!
-}
-
 type Change {
   id: Int!
   versionId: Int!
@@ -52,14 +62,6 @@ type Version {
   createdAt: DateTime!
   committedBy: User!
   changes: [Change!]!
-}
-
-type Project {
-  id: Int!
-  name: String!
-  createdAt: DateTime!
-  createdBy: User!
-  members: [User!]!
 }
 
 type Query {
@@ -97,7 +99,14 @@ type Mutation {
   newFile(projectId: Int!, filePath: String!, initialContent: String): File!
 
   """Update a file's content. Returns the file."""
-  updateFile(fileId: Int!, newContent: String!): File!
+  updateFile(
+    fileId: Int!
+    newContent: String!
+    projectId: Int!
+
+    """Yjs document updates in base64 format"""
+    yDocUpdates: String!
+  ): File!
 
   """Create a new project."""
   createProject(

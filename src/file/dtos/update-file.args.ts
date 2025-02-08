@@ -7,4 +7,12 @@ export class UpdateFileArgs {
 
   @Field()
   newContent: string;
+
+  @Field(() => Int)
+  projectId: number;
+
+  @Field({
+    description: 'Yjs document updates in base64 format',
+  })
+  yDocUpdates: string;
 }

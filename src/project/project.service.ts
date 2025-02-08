@@ -250,4 +250,20 @@ export class ProjectService {
 
     return membership !== null;
   }
+
+  /**
+   * Store a Yjs document associated with the project in the database
+   * @param projectId The project id
+   * @param yDocUpdates The Yjs document in update format (v2) encoded as base64
+   */
+  async storeYDoc(projectId: number, yDocUpdates: string) {
+    await this.prisma.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        yDocUpdates,
+      },
+    });
+  }
 }

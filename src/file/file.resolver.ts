@@ -7,6 +7,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { ProjectService } from 'src/project/project.service';
 import { NewFileArgs } from './dtos/new-file.args';
 import { UpdateFileArgs } from './dtos/update-file.args';
 import { FileService } from './file.service';
@@ -15,7 +16,10 @@ import { Version } from './models/version.model';
 
 @Resolver(() => File)
 export class FileResolver {
-  constructor(private filesService: FileService) {}
+  constructor(
+    private filesService: FileService,
+    private projectService: ProjectService,
+  ) {}
 
   @ResolveField()
   async size(@Parent() file: File) {
@@ -37,7 +41,10 @@ export class FileResolver {
   @Mutation(() => File, {
     description: "Update a file's content. Returns the file.",
   })
-  async updateFile(@Args() { fileId, newContent }: UpdateFileArgs) {
+  async updateFile(
+    @Args() { fileId, newContent, projectId, yDocUpdates }: UpdateFileArgs,
+  ) {
+    await this.projectService.storeYDoc(projectId, yDocUpdates);
     return this.filesService.updateFile(fileId, newContent);
   }
 
