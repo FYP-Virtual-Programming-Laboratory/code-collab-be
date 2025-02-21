@@ -63,4 +63,12 @@ export class FileResolver {
   async getFileVersions(@Args('fileId', { type: () => Int }) fileId: number) {
     return this.filesService.getFileHistory(fileId);
   }
+
+  @Query(() => File, {
+    nullable: true,
+    description: 'Get a file by its id.',
+  })
+  async getFile(@Args('fileId', { type: () => Int }) fileId: number) {
+    return this.filesService.getFile(fileId);
+  }
 }

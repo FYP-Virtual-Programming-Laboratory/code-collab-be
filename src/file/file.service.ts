@@ -112,4 +112,18 @@ export class FileService {
 
     return versions;
   }
+
+  async getFile(fileId: number) {
+    try {
+      const file = await this.prisma.file.findUnique({
+        where: {
+          id: fileId,
+        },
+      });
+
+      return file;
+    } catch (error) {
+      return null;
+    }
+  }
 }

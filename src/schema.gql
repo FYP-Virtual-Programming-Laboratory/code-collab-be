@@ -75,6 +75,9 @@ type Query {
   """
   getFileVersions(fileId: Int!): [Version!]!
 
+  """Get a file by its id."""
+  getFile(fileId: Int!): File
+
   """
   Find a project by its `id`. If `null` is returned, then the project could not be found.
   """
