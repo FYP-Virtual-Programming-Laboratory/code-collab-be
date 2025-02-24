@@ -14,11 +14,8 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  username  String @unique
-  email     String @unique
-  firstName String @map("first_name")
-  lastName  String @map("last_name")
+  id       Int    @id @default(autoincrement())
+  username String @unique
 
   projects           Project[]
   projectMemberships ProjectMembership[]

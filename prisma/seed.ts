@@ -10,9 +10,6 @@ async function main() {
     update: {},
     create: {
       username: 'farayolaj',
-      email: 'farayolajoshua@gmail.com',
-      firstName: 'Joshua',
-      lastName: 'Farayola',
     },
   });
   const johndoe = await prisma.user.upsert({
@@ -22,9 +19,6 @@ async function main() {
     update: {},
     create: {
       username: 'johndoe',
-      email: 'johndoe@gmail.com',
-      firstName: 'John',
-      lastName: 'Doe',
     },
   });
 
@@ -91,8 +85,17 @@ async function main() {
   if (!firstVersion)
     await prisma.version.create({
       data: {
-        fileId: fileMainJs.id,
-        committedById: farayolaj.id,
+        snapshot: '',
+        file: {
+          connect: {
+            id: fileMainJs.id,
+          },
+        },
+        committedBy: {
+          connect: {
+            id: farayolaj.id,
+          },
+        },
       },
     });
 }
