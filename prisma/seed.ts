@@ -79,31 +79,22 @@ async function main() {
     },
   });
 
-  const firstVersion = await prisma.version.upsert({
+  let firstVersion = await prisma.version.findFirst({
     where: {
-      fileId_versionNumber: {
-        fileId: fileMainJs.id,
-        versionNumber: 1,
-      },
-    },
-    update: {},
-    create: {
       fileId: fileMainJs.id,
-      versionNumber: 1,
-      committedById: farayolaj.id,
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
 
-  const change = await prisma.change.create({
-    data: {
-      versionId: firstVersion.id,
-      content: 'console.log("Hello, World!");',
-      lineNumber: 1,
-      position: 1,
-      operation: 'insert',
-      madeById: farayolaj.id,
-    },
-  });
+  if (!firstVersion)
+    await prisma.version.create({
+      data: {
+        fileId: fileMainJs.id,
+        committedById: farayolaj.id,
+      },
+    });
 }
 
 main()

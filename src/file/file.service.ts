@@ -24,7 +24,7 @@ export class FileService {
   }
 
   async updateFile(fileId: number, newContent: string) {
-    // Todo: update file version
+    // Todo: update file version and create snapshot
     return await this.prisma.file.update({
       where: {
         id: fileId,
@@ -51,15 +51,7 @@ export class FileService {
         id: fileId,
       },
       select: {
-        versions: {
-          include: {
-            changes: {
-              include: {
-                madeBy: true,
-              },
-            },
-          },
-        },
+        versions: true,
       },
     });
 
@@ -68,18 +60,6 @@ export class FileService {
     }
 
     const contributorMap = new Map<number, number>();
-
-    file.versions.forEach((version) => {
-      version.changes.forEach((change) => {
-        if (!contributorMap.has(change.madeById))
-          contributorMap.set(change.madeById, 1);
-        else
-          contributorMap.set(
-            change.madeById,
-            contributorMap.get(change.madeById) + 1,
-          );
-      });
-    });
 
     return {
       contributorIds: Array.from(contributorMap.keys()),
@@ -99,11 +79,6 @@ export class FileService {
       },
       include: {
         committedBy: true,
-        changes: {
-          include: {
-            madeBy: true,
-          },
-        },
       },
       orderBy: {
         createdAt: 'desc',
