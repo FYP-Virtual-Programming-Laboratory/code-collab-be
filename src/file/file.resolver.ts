@@ -1,5 +1,6 @@
 import {
   Args,
+  Context,
   Int,
   Mutation,
   Parent,
@@ -39,13 +40,21 @@ export class FileResolver {
   }
 
   @Mutation(() => File, {
-    description: "Update a file's content. Returns the file.",
+    description:
+      "Update a file's content and create a version for the file. Returns the file.",
   })
   async updateFile(
-    @Args() { fileId, newContent, projectId, yDocUpdates }: UpdateFileArgs,
+    @Args()
+    { fileId, newContent, projectId, yDocUpdates, snapshot }: UpdateFileArgs,
+    @Context('userId') userId: number,
   ) {
     await this.projectService.storeYDoc(projectId, yDocUpdates);
-    return this.filesService.updateFile(fileId, newContent);
+    return this.filesService.updateFile({
+      fileId,
+      newContent,
+      userId,
+      snapshot,
+    });
   }
 
   @Query(() => [File], {

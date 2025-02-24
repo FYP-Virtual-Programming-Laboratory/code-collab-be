@@ -23,8 +23,33 @@ export class FileService {
     });
   }
 
-  async updateFile(fileId: number, newContent: string) {
-    // Todo: update file version and create snapshot
+  async updateFile({
+    fileId,
+    newContent,
+    snapshot,
+    userId,
+  }: {
+    fileId: number;
+    newContent: string;
+    snapshot: string;
+    userId: number;
+  }) {
+    await this.prisma.version.create({
+      data: {
+        snapshot,
+        committedBy: {
+          connect: {
+            id: userId,
+          },
+        },
+        file: {
+          connect: {
+            id: fileId,
+          },
+        },
+      },
+    });
+
     return await this.prisma.file.update({
       where: {
         id: fileId,

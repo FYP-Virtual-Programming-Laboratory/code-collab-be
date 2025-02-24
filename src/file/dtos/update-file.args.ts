@@ -15,4 +15,9 @@ export class UpdateFileArgs {
     description: 'Yjs document updates in base64 format',
   })
   yDocUpdates: string;
+
+  @Field({
+    description: 'Yjs snapshot in base64 format',
+  })
+  snapshot: string;
 }
