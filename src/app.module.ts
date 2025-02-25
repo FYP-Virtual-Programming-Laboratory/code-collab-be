@@ -2,6 +2,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { Request } from 'express';
 import { GraphQLError } from 'graphql';
 import { join } from 'path';
 import { AppService } from './app.service';
@@ -16,7 +17,11 @@ import { ProjectModule } from './project/project.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      context: async ({ req }) => {
+      context: async ({ req }: { req: Request }) => {
+        if (req.body.operationName === 'IntrospectionQuery') {
+          return {};
+        }
+
         const user = req.headers.user as string;
 
         if (!user) {
