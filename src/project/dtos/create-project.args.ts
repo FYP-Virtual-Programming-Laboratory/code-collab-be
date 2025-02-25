@@ -6,9 +6,6 @@ export class CreateProjectArgs {
   sessionId: string;
 
   @Field()
-  createdBy: string;
-
-  @Field()
   name: string;
 
   @Field(() => [String], {

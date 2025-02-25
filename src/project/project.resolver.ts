@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import {
   Args,
+  Context,
   Int,
   Mutation,
   Parent,
@@ -12,6 +13,7 @@ import { GraphQLError } from 'graphql';
 import { CreateProjectArgs } from './dtos/create-project.args';
 import { UpdateProjectArgs } from './dtos/update-project.args';
 import { Project } from './models/project.model';
+import { ProjectUpdateGuard } from './project-update.guard';
 import { ProjectGuard } from './project.guard';
 import { ProjectService } from './project.service';
 
@@ -47,17 +49,14 @@ export class ProjectResolver {
     description: 'Create a new project.',
   })
   async createProject(
-    @Args() { sessionId, createdBy, name, members }: CreateProjectArgs,
+    @Args() { sessionId, name, members }: CreateProjectArgs,
+    @Context('user') user: string,
   ) {
-    return this.projectService.createProject(
-      sessionId,
-      createdBy,
-      name,
-      members,
-    );
+    return this.projectService.createProject(sessionId, user, name, members);
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(ProjectUpdateGuard)
   async updateProject(@Args() { id, sessionId, name }: UpdateProjectArgs) {
     if (!id && !sessionId) {
       throw new GraphQLError('Either `id` or `sessionId` must be provided.', {

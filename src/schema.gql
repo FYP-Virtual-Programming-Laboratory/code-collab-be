@@ -92,7 +92,6 @@ type Mutation {
   """Create a new project."""
   createProject(
     sessionId: String!
-    createdBy: String!
     name: String!
 
     """List of users to add to the project. The creator id may not be added."""
