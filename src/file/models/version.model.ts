@@ -5,6 +5,9 @@ export class Version {
   @Field(() => Int)
   id: number;
 
+  @Field()
+  snapshot: string;
+
   @Field(() => Date)
   createdAt: Date;
 
