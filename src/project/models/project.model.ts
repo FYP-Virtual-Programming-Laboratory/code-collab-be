@@ -21,7 +21,7 @@ export class Project {
   @Field()
   createdBy: string;
 
-  @Field()
+  @Field(() => [String])
   members: string[];
 
   @Field(() => Contributions)

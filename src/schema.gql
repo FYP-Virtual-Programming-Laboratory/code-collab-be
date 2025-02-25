@@ -2,12 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
-  id: Int!
-  username: String!
-  email: String!
-  lastName: String!
-  firstName: String!
+type ContributionStats {
+  contributor: String!
+  contributions: Int!
+}
+
+type Contributions {
+  contributors: [String!]!
+  contributionStats: [ContributionStats!]!
 }
 
 type Project {
@@ -16,24 +18,15 @@ type Project {
   name: String!
   yDocUpdates: String!
   createdAt: DateTime!
-  createdBy: User!
-  members: [User!]!
+  createdBy: String!
+  members: [String!]!
+  contributions: Contributions!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-type ContributionStats {
-  contributorId: Int!
-  contributions: Int!
-}
-
-type Contributions {
-  contributorIds: [Int!]!
-  contributionStats: [ContributionStats!]!
-}
 
 type File {
   id: Int!
@@ -44,24 +37,12 @@ type File {
   size: Int
   createdAt: DateTime!
   lastModified: DateTime!
-  contributions: Contributions!
-}
-
-type Change {
-  id: Int!
-  versionId: Int!
-  madeBy: User!
-  content: String!
-  lineNumber: Int!
-  position: Int!
-  operation: String!
 }
 
 type Version {
   id: Int!
   createdAt: DateTime!
-  committedBy: User!
-  changes: [Change!]!
+  committedBy: String!
 }
 
 type Query {
@@ -87,21 +68,15 @@ type Query {
   Find a project by its `sessionId`. If `null` is returned, then the project could not be found.
   """
   getProjectBySessionId(sessionId: String!): Project
-
-  """
-  Find a user by `id`. Returns null if user with specified `id` cannot be found.
-  """
-  getUser(id: Int!): User
-
-  """Find multiple users by their `id`s. Returns only the users it finds."""
-  getUsers(ids: [Int!]!): [User!]!
 }
 
 type Mutation {
   """Create a new file. Returns the new file"""
   newFile(projectId: Int!, filePath: String!, initialContent: String): File!
 
-  """Update a file's content. Returns the file."""
+  """
+  Update a file's content and create a version for the file. Returns the file.
+  """
   updateFile(
     fileId: Int!
     newContent: String!
@@ -109,18 +84,19 @@ type Mutation {
 
     """Yjs document updates in base64 format"""
     yDocUpdates: String!
+
+    """Yjs snapshot in base64 format"""
+    snapshot: String!
   ): File!
 
   """Create a new project."""
   createProject(
     sessionId: String!
-    creatorId: Int!
+    createdBy: String!
     name: String!
 
-    """
-    List of user IDs to add to the project. The creator id may not be added.
-    """
-    memberIds: [Int!]
+    """List of users to add to the project. The creator id may not be added."""
+    members: [String!]
   ): Project!
   updateProject(
     """
@@ -134,6 +110,6 @@ type Mutation {
     sessionId: String
     name: String!
   ): Boolean!
-  addProjectMember(projectId: Int!, userId: Int!): Boolean!
-  removeProjectMember(projectId: Int!, userId: Int!): Boolean!
+  addProjectMember(projectId: Int!, user: String!): Boolean!
+  removeProjectMember(projectId: Int!, user: Int!): Boolean!
 }

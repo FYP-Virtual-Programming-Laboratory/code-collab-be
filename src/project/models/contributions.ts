@@ -3,7 +3,7 @@ import { ContributionStats } from './contribution-stat.model';
 
 @ObjectType()
 export class Contributions {
-  @Field()
+  @Field(() => [String])
   contributors: string[];
 
   @Field(() => [ContributionStats])
