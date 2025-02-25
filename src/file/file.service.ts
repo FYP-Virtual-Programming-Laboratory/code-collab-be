@@ -27,21 +27,17 @@ export class FileService {
     fileId,
     newContent,
     snapshot,
-    userId,
+    user,
   }: {
     fileId: number;
     newContent: string;
     snapshot: string;
-    userId: number;
+    user: string;
   }) {
     await this.prisma.version.create({
       data: {
         snapshot,
-        committedBy: {
-          connect: {
-            id: userId,
-          },
-        },
+        committedBy: user,
         file: {
           connect: {
             id: fileId,
@@ -101,9 +97,6 @@ export class FileService {
     const versions = await this.prisma.version.findMany({
       where: {
         fileId,
-      },
-      include: {
-        committedBy: true,
       },
       orderBy: {
         createdAt: 'desc',

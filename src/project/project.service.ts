@@ -12,7 +12,6 @@ export class ProjectService {
         sessionId,
       },
       include: {
-        createdBy: true,
         projectMemberships: {
           select: {
             user: true,
@@ -37,7 +36,6 @@ export class ProjectService {
         id,
       },
       include: {
-        createdBy: true,
         projectMemberships: {
           select: {
             user: true,
@@ -58,34 +56,25 @@ export class ProjectService {
 
   async createProject(
     sessionId: string,
-    creatorId: number,
+    createdBy: string,
     name: string,
-    memberIds: number[] = [],
+    members: string[] = [],
   ) {
-    memberIds = Array.from(new Set([creatorId, ...memberIds]));
+    members = Array.from(new Set([createdBy, ...members]));
 
     try {
       const project = await this.prisma.project.create({
         data: {
           sessionId,
           name,
-          createdBy: {
-            connect: {
-              id: creatorId,
-            },
-          },
+          createdBy,
           projectMemberships: {
-            create: memberIds?.map((id) => ({
-              user: {
-                connect: {
-                  id,
-                },
-              },
+            create: members?.map((member) => ({
+              user: member,
             })),
           },
         },
         include: {
-          createdBy: true,
           projectMemberships: {
             select: {
               user: true,
@@ -157,10 +146,10 @@ export class ProjectService {
   /**
    *
    * @param idOrSessionId A project id or its associated session id
-   * @param userId The user id to add to the project
+   * @param user The user id to add to the project
    * @returns true, throws an error if the project or user cannot be found.
    */
-  async addMember(idOrSessionId: number | string, userId: number) {
+  async addMember(idOrSessionId: number | string, user: string) {
     let projectId =
       typeof idOrSessionId === 'string'
         ? (
@@ -173,18 +162,14 @@ export class ProjectService {
     try {
       await this.prisma.projectMembership.upsert({
         where: {
-          userId_projectId: {
-            userId,
+          user_projectId: {
+            user,
             projectId,
           },
         },
         update: {},
         create: {
-          user: {
-            connect: {
-              id: userId,
-            },
-          },
+          user,
           project: {
             connect: {
               id: projectId,
@@ -206,10 +191,10 @@ export class ProjectService {
 
   /**
    * @param idOrSessionId A project id or its associated session id
-   * @param userId The user id to remove from the project
+   * @param user The user id to remove from the project
    * @returns true if the user was removed, false otherwise.
    */
-  async removeMember(idOrSessionId: number | string, userId: number) {
+  async removeMember(idOrSessionId: number | string, user: string) {
     const project = await this.prisma.project.findFirst({
       where: {
         OR: [
@@ -231,7 +216,7 @@ export class ProjectService {
 
     if (!project) return false;
 
-    if (userId === project.createdById) {
+    if (user === project.createdBy) {
       throw new GraphQLError('Cannot remove the project creator.', {
         extensions: { code: 'BAD_REQUEST' },
       });
@@ -241,8 +226,8 @@ export class ProjectService {
 
     const membership = await this.prisma.projectMembership.delete({
       where: {
-        userId_projectId: {
-          userId,
+        user_projectId: {
+          user,
           projectId,
         },
       },

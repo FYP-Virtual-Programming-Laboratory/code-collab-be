@@ -31,13 +31,13 @@ export class ProjectResolver {
     description: 'Create a new project.',
   })
   async createProject(
-    @Args() { sessionId, creatorId, name, memberIds }: CreateProjectArgs,
+    @Args() { sessionId, createdBy, name, members }: CreateProjectArgs,
   ) {
     return this.projectService.createProject(
       sessionId,
-      creatorId,
+      createdBy,
       name,
-      memberIds,
+      members,
     );
   }
 
@@ -57,16 +57,16 @@ export class ProjectResolver {
   @Mutation(() => Boolean)
   async addProjectMember(
     @Args('projectId', { type: () => Int }) projectId: number,
-    @Args('userId', { type: () => Int }) userId: number,
+    @Args('user') user: string,
   ) {
-    return this.projectService.addMember(projectId, userId);
+    return this.projectService.addMember(projectId, user);
   }
 
   @Mutation(() => Boolean)
   async removeProjectMember(
     @Args('projectId', { type: () => Int }) projectId: number,
-    @Args('userId', { type: () => Int }) userId: number,
+    @Args('user', { type: () => Int }) user: string,
   ) {
-    return this.projectService.removeMember(projectId, userId);
+    return this.projectService.removeMember(projectId, user);
   }
 }

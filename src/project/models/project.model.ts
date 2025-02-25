@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { User } from 'src/user/models/user.model';
 
 @ObjectType()
 export class Project {
@@ -18,9 +17,9 @@ export class Project {
   @Field((type) => Date)
   createdAt: Date;
 
-  @Field((type) => User)
-  createdBy: User;
+  @Field()
+  createdBy: string;
 
-  @Field((type) => [User])
-  members: User[];
+  @Field()
+  members: string[];
 }

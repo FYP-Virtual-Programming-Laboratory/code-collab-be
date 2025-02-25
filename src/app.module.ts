@@ -8,27 +8,19 @@ import { AppService } from './app.service';
 import { FileModule } from './file/file.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProjectModule } from './project/project.module';
-import { UserModule } from './user/user.module';
-import { UserService } from './user/user.service';
 
 @Module({
   imports: [
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [UserModule],
-      inject: [UserService],
-      useFactory: async (userService: UserService) => ({
-        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-        playground: false,
-        plugins: [ApolloServerPluginLandingPageLocalDefault()],
-        context: async ({ req }) => {
-          const userId = parseInt(req.headers.userId);
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      context: async ({ req }) => {
+        const user = req.headers.user as string;
 
-          if (userId && (await userService.findUserById(userId))) {
-            return { userId };
-          }
-
-          throw new GraphQLError('User does not exist', {
+        if (!user) {
+          throw new GraphQLError('No user specified', {
             extensions: {
               code: 'UNAUTHENTICATED',
               http: {
@@ -36,13 +28,14 @@ import { UserService } from './user/user.service';
               },
             },
           });
-        },
-      }),
+        }
+
+        return { user };
+      },
     }),
     FileModule,
     PrismaModule,
     ProjectModule,
-    UserModule,
   ],
   providers: [AppService],
 })

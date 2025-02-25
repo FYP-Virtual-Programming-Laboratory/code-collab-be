@@ -3,24 +3,8 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const farayolaj = await prisma.user.upsert({
-    where: {
-      username: 'farayolaj',
-    },
-    update: {},
-    create: {
-      username: 'farayolaj',
-    },
-  });
-  const johndoe = await prisma.user.upsert({
-    where: {
-      username: 'johndoe',
-    },
-    update: {},
-    create: {
-      username: 'johndoe',
-    },
-  });
+  const FARAYOLAJ = 'farayolaj';
+  const JOHNDOE = 'johndoe';
 
   const project = await prisma.project.upsert({
     where: {
@@ -29,34 +13,34 @@ async function main() {
     update: {},
     create: {
       name: 'My Project',
-      createdById: farayolaj.id,
+      createdBy: FARAYOLAJ,
       sessionId: '123456',
     },
   });
 
   await prisma.projectMembership.upsert({
     where: {
-      userId_projectId: {
-        userId: farayolaj.id,
+      user_projectId: {
+        user: FARAYOLAJ,
         projectId: project.id,
       },
     },
     update: {},
     create: {
-      userId: farayolaj.id,
+      user: FARAYOLAJ,
       projectId: project.id,
     },
   });
   await prisma.projectMembership.upsert({
     where: {
-      userId_projectId: {
-        userId: johndoe.id,
+      user_projectId: {
+        user: JOHNDOE,
         projectId: project.id,
       },
     },
     update: {},
     create: {
-      userId: johndoe.id,
+      user: JOHNDOE,
       projectId: project.id,
     },
   });
@@ -91,11 +75,7 @@ async function main() {
             id: fileMainJs.id,
           },
         },
-        committedBy: {
-          connect: {
-            id: farayolaj.id,
-          },
-        },
+        committedBy: FARAYOLAJ,
       },
     });
 }

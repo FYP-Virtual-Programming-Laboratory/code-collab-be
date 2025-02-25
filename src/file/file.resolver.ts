@@ -46,13 +46,13 @@ export class FileResolver {
   async updateFile(
     @Args()
     { fileId, newContent, projectId, yDocUpdates, snapshot }: UpdateFileArgs,
-    @Context('userId') userId: number,
+    @Context('user') user: string,
   ) {
     await this.projectService.storeYDoc(projectId, yDocUpdates);
     return this.filesService.updateFile({
       fileId,
       newContent,
-      userId,
+      user,
       snapshot,
     });
   }
