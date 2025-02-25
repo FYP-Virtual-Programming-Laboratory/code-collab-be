@@ -18,7 +18,7 @@ import { ProjectModule } from './project/project.module';
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       context: async ({ req }: { req: Request }) => {
-        if (req.body.operationName === 'IntrospectionQuery') {
+        if (req.body.query.includes('IntrospectionQuery')) {
           return {};
         }
 
