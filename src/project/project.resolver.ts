@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Int,
@@ -11,9 +12,11 @@ import { GraphQLError } from 'graphql';
 import { CreateProjectArgs } from './dtos/create-project.args';
 import { UpdateProjectArgs } from './dtos/update-project.args';
 import { Project } from './models/project.model';
+import { ProjectGuard } from './project.guard';
 import { ProjectService } from './project.service';
 
 @Resolver(() => Project)
+@UseGuards(ProjectGuard)
 export class ProjectResolver {
   constructor(private projectService: ProjectService) {}
 

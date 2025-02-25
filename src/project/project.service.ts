@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { applyUpdateV2, Doc } from 'yjs';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ProjectService {
