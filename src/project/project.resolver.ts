@@ -80,7 +80,7 @@ export class ProjectResolver {
   @Mutation(() => Boolean)
   async removeProjectMember(
     @Args('projectId', { type: () => Int }) projectId: number,
-    @Args('user', { type: () => Int }) user: string,
+    @Args('user') user: string,
   ) {
     return this.projectService.removeMember(projectId, user);
   }

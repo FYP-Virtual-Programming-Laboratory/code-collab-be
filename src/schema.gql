@@ -111,5 +111,5 @@ type Mutation {
     name: String!
   ): Boolean!
   addProjectMember(projectId: Int!, user: String!): Boolean!
-  removeProjectMember(projectId: Int!, user: Int!): Boolean!
+  removeProjectMember(projectId: Int!, user: String!): Boolean!
 }
