@@ -1,4 +1,12 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
 import { CreateProjectArgs } from './dtos/create-project.args';
 import { UpdateProjectArgs } from './dtos/update-project.args';
@@ -8,6 +16,11 @@ import { ProjectService } from './project.service';
 @Resolver(() => Project)
 export class ProjectResolver {
   constructor(private projectService: ProjectService) {}
+
+  @ResolveField()
+  async contributions(@Parent() project: Project) {
+    return this.projectService.getContributions(project.id);
+  }
 
   @Query(() => Project, {
     nullable: true,

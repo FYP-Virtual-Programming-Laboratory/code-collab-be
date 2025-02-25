@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { applyUpdateV2, Doc } from 'yjs';
 
 @Injectable()
 export class ProjectService {
@@ -27,6 +28,30 @@ export class ProjectService {
     return {
       ...project,
       members: project.projectMemberships.map((membership) => membership.user),
+    };
+  }
+
+  async getContributions(projectId: number) {
+    const project = await this.findProjectById(projectId);
+
+    if (!project) {
+      return null;
+    }
+
+    const docUpdatesBytes = new Uint8Array(
+      Buffer.from(project.yDocUpdates, 'base64'),
+    );
+    const doc = new Doc();
+    applyUpdateV2(doc, docUpdatesBytes);
+    const contributions = doc
+      .getMap<number>('contributions')
+      .toJSON() as Record<string, number>;
+
+    return {
+      contributors: Object.keys(contributions),
+      contributions: Array.from(Object.entries(contributions)).map(
+        ([contributor, contributions]) => ({ contributor, contributions }),
+      ),
     };
   }
 

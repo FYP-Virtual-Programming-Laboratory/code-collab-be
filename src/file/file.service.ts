@@ -66,33 +66,6 @@ export class FileService {
     return files;
   }
 
-  async getFileContributions(fileId: number) {
-    const file = await this.prisma.file.findUnique({
-      where: {
-        id: fileId,
-      },
-      select: {
-        versions: true,
-      },
-    });
-
-    if (!file) {
-      return null;
-    }
-
-    const contributorMap = new Map<number, number>();
-
-    return {
-      contributorIds: Array.from(contributorMap.keys()),
-      contributionStats: Array.from(contributorMap.entries()).map(
-        ([contributorId, contributions]) => ({
-          contributorId,
-          contributions,
-        }),
-      ),
-    };
-  }
-
   async getFileHistory(fileId: number) {
     const versions = await this.prisma.version.findMany({
       where: {

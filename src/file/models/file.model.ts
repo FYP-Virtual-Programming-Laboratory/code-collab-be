@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Contributions } from './contributions';
 
 @ObjectType()
 export class File {
@@ -23,7 +22,4 @@ export class File {
 
   @Field((type) => Date)
   lastModified: Date;
-
-  @Field(() => Contributions)
-  contributions: Contributions;
 }

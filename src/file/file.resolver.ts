@@ -27,11 +27,6 @@ export class FileResolver {
     return Buffer.byteLength(file.content, 'utf8');
   }
 
-  @ResolveField()
-  async contributions(@Parent() file: File) {
-    return this.filesService.getFileContributions(file.id);
-  }
-
   @Mutation(() => File, {
     description: 'Create a new file. Returns the new file',
   })
