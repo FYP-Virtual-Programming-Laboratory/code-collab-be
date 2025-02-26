@@ -1,5 +1,5 @@
 {
-  "name": "editor-backend",
+  "name": "code-collab-be",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -12,6 +12,8 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:websocket": "HOST=localhost PORT=1234 node ./node_modules/y-websocket/bin/server.cjs",
+    "start:webrtc": "PORT=4444 node ./node_modules/y-webrtc/bin/server.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -30,6 +32,8 @@
     "graphql": "^16.10.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "y-webrtc": "^10.3.0",
+    "y-websocket": "^2.1.0",
     "yjs": "^13.6.23"
   },
   "devDependencies": {
