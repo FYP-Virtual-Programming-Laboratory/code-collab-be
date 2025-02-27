@@ -7,6 +7,71 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
+  async assertAccess(user: string, projectOrSessionId: number | string) {
+    const project = await this.prisma.project.findFirst({
+      where: {
+        OR: [
+          {
+            id:
+              typeof projectOrSessionId === 'string'
+                ? parseInt(projectOrSessionId)
+                : projectOrSessionId,
+          },
+          {
+            sessionId:
+              typeof projectOrSessionId === 'number'
+                ? projectOrSessionId.toString()
+                : projectOrSessionId,
+          },
+        ],
+        projectMemberships: {
+          some: {
+            user,
+          },
+        },
+      },
+    });
+
+    if (!project) {
+      throw new GraphQLError('Unauthorized to access project', {
+        extensions: {
+          code: 'UNAUTHORIZED',
+          description: 'You do not have access to this project.',
+        },
+      });
+    }
+  }
+
+  async assertOwner(user: string, projectOrSessionId: number | string) {
+    const project = await this.prisma.project.findFirst({
+      where: {
+        OR: [
+          {
+            id:
+              typeof projectOrSessionId === 'string'
+                ? parseInt(projectOrSessionId)
+                : projectOrSessionId,
+          },
+          {
+            sessionId:
+              typeof projectOrSessionId === 'number'
+                ? projectOrSessionId.toString()
+                : projectOrSessionId,
+          },
+        ],
+      },
+    });
+
+    if (!project || project.createdBy !== user) {
+      throw new GraphQLError('Unauthorized to update project', {
+        extensions: {
+          code: 'UNAUTHORIZED',
+          description: 'You do not have access to update this project.',
+        },
+      });
+    }
+  }
+
   async getProjectBySessionId(sessionId: string) {
     const project = await this.prisma.project.findUnique({
       where: {

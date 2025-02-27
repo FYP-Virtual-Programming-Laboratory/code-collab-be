@@ -1,4 +1,3 @@
-import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -13,12 +12,9 @@ import { GraphQLError } from 'graphql';
 import { CreateProjectArgs } from './dtos/create-project.args';
 import { UpdateProjectArgs } from './dtos/update-project.args';
 import { Project } from './models/project.model';
-import { ProjectUpdateGuard } from './project-update.guard';
-import { ProjectGuard } from './project.guard';
 import { ProjectService } from './project.service';
 
 @Resolver(() => Project)
-@UseGuards(ProjectGuard)
 export class ProjectResolver {
   constructor(private projectService: ProjectService) {}
 
@@ -32,7 +28,11 @@ export class ProjectResolver {
     description:
       'Find a project by its `id`. If `null` is returned, then the project could not be found.',
   })
-  async getProject(@Args('id', { type: () => Int }) id: number) {
+  async getProject(
+    @Args('id', { type: () => Int }) id: number,
+    @Context('user') user: string,
+  ) {
+    this.projectService.assertAccess(user, id);
     return this.projectService.findProjectById(id);
   }
 
@@ -41,7 +41,11 @@ export class ProjectResolver {
     description:
       'Find a project by its `sessionId`. If `null` is returned, then the project could not be found.',
   })
-  async getProjectBySessionId(@Args('sessionId') sessionId: string) {
+  async getProjectBySessionId(
+    @Args('sessionId') sessionId: string,
+    @Context('user') user: string,
+  ) {
+    this.projectService.assertAccess(user, sessionId);
     return this.projectService.getProjectBySessionId(sessionId);
   }
 
@@ -56,8 +60,10 @@ export class ProjectResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ProjectUpdateGuard)
-  async updateProject(@Args() { id, sessionId, name }: UpdateProjectArgs) {
+  async updateProject(
+    @Args() { id, sessionId, name }: UpdateProjectArgs,
+    @Context('user') user: string,
+  ) {
     if (!id && !sessionId) {
       throw new GraphQLError('Either `id` or `sessionId` must be provided.', {
         extensions: {
@@ -66,6 +72,8 @@ export class ProjectResolver {
       });
     }
 
+    this.projectService.assertAccess(user, id || sessionId);
+    this.projectService.assertOwner(user, id || sessionId);
     return this.projectService.updateProject(id || sessionId, { name });
   }
 
@@ -73,7 +81,10 @@ export class ProjectResolver {
   async addProjectMember(
     @Args('projectId', { type: () => Int }) projectId: number,
     @Args('user') user: string,
+    @Context('user') currentUser: string,
   ) {
+    this.projectService.assertAccess(currentUser, projectId);
+    this.projectService.assertOwner(currentUser, projectId);
     return this.projectService.addMember(projectId, user);
   }
 
@@ -81,7 +92,10 @@ export class ProjectResolver {
   async removeProjectMember(
     @Args('projectId', { type: () => Int }) projectId: number,
     @Args('user') user: string,
+    @Context('user') currentUser: string,
   ) {
+    this.projectService.assertAccess(currentUser, projectId);
+    this.projectService.assertOwner(currentUser, projectId);
     return this.projectService.removeMember(projectId, user);
   }
 
@@ -92,7 +106,16 @@ export class ProjectResolver {
       description: 'A base64 encoded string of the project yjs document.',
     })
     doc: string,
+    @Context('user') user: string,
   ) {
-    return this.projectService.storeYDoc(projectId, doc);
+    try {
+      this.projectService.assertAccess(user, projectId);
+      await this.projectService.storeYDoc(projectId, doc);
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 }
