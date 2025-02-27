@@ -103,6 +103,9 @@ type Mutation {
     snapshot: String!
   ): File!
 
+  """Delete a file by its id."""
+  deleteFile(fileId: Int!): Boolean!
+
   """Create a new project."""
   createProject(
     sessionId: String!

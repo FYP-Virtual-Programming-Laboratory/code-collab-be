@@ -9,6 +9,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { ProjectService } from 'src/project/project.service';
+import { DeleteFileArgs } from './dtos/delete-file.args';
 import { NewFileArgs } from './dtos/new-file.args';
 import { UpdateFileNameArgs } from './dtos/update-file-name.args';
 import { UpdateFileArgs } from './dtos/update-file.args';
@@ -92,5 +93,12 @@ export class FileResolver {
   })
   async getFile(@Args('fileId', { type: () => Int }) fileId: number) {
     return this.filesService.getFile(fileId);
+  }
+
+  @Mutation(() => Boolean, {
+    description: 'Delete a file by its id.',
+  })
+  async deleteFile(@Args() { fileId }: DeleteFileArgs) {
+    return this.filesService.deleteFile(fileId);
   }
 }
