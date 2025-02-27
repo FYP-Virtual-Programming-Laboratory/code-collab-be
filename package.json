@@ -79,5 +79,6 @@
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"
-  }
+  },
+  "packageManager": "pnpm@9.15.0"
 }
