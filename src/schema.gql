@@ -125,4 +125,10 @@ type Mutation {
   ): Boolean!
   addProjectMember(projectId: Int!, user: String!): Boolean!
   removeProjectMember(projectId: Int!, user: String!): Boolean!
+  updateProjectDoc(
+    projectId: Int!
+
+    """A base64 encoded string of the project yjs document."""
+    doc: String!
+  ): Boolean!
 }

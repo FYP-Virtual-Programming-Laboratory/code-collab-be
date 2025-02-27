@@ -84,4 +84,15 @@ export class ProjectResolver {
   ) {
     return this.projectService.removeMember(projectId, user);
   }
+
+  @Mutation(() => Boolean)
+  async updateProjectDoc(
+    @Args('projectId', { type: () => Int }) projectId: number,
+    @Args('doc', {
+      description: 'A base64 encoded string of the project yjs document.',
+    })
+    doc: string,
+  ) {
+    return this.projectService.storeYDoc(projectId, doc);
+  }
 }
