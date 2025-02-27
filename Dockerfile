@@ -17,4 +17,6 @@ EXPOSE 3000
 EXPOSE 1234
 EXPOSE 4444
 
-CMD [ "sh", "./start_script.sh" ]
+ENV DATABASE_URL=file:./database.db
+
+CMD [ "pnpm", "start:app" ]
