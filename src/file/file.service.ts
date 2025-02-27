@@ -23,6 +23,49 @@ export class FileService {
     });
   }
 
+  async updateFileName({
+    fileId,
+    newName,
+    snapshot,
+    user,
+  }: {
+    fileId: number;
+    newName: string;
+    snapshot: string;
+    user: string;
+  }) {
+    const file = await this.prisma.file.findUnique({
+      where: {
+        id: fileId,
+      },
+    });
+
+    // Create a version
+    await this.prisma.version.create({
+      data: {
+        snapshot,
+        committedBy: user,
+        file: {
+          connect: {
+            id: fileId,
+          },
+        },
+      },
+    });
+
+    const splitPath = file.path.split('/');
+    splitPath[splitPath.length - 1] = newName;
+
+    return await this.prisma.file.update({
+      where: {
+        id: fileId,
+      },
+      data: {
+        path: splitPath.join('/'),
+      },
+    });
+  }
+
   async updateFile({
     fileId,
     newContent,

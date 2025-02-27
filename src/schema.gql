@@ -90,6 +90,19 @@ type Mutation {
     snapshot: String!
   ): File!
 
+  """Update a file's name. Returns the file."""
+  updateFileName(
+    fileId: Int!
+    newName: String!
+    projectId: Int!
+
+    """Yjs document updates in base64 format"""
+    yDocUpdates: String!
+
+    """Yjs snapshot in base64 format"""
+    snapshot: String!
+  ): File!
+
   """Create a new project."""
   createProject(
     sessionId: String!

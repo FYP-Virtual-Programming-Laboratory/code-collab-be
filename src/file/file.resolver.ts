@@ -10,6 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { ProjectService } from 'src/project/project.service';
 import { NewFileArgs } from './dtos/new-file.args';
+import { UpdateFileNameArgs } from './dtos/update-file-name.args';
 import { UpdateFileArgs } from './dtos/update-file.args';
 import { FileService } from './file.service';
 import { File } from './models/file.model';
@@ -47,6 +48,23 @@ export class FileResolver {
     return this.filesService.updateFile({
       fileId,
       newContent,
+      user,
+      snapshot,
+    });
+  }
+
+  @Mutation(() => File, {
+    description: "Update a file's name. Returns the file.",
+  })
+  async updateFileName(
+    @Args()
+    { fileId, newName, projectId, yDocUpdates, snapshot }: UpdateFileNameArgs,
+    @Context('user') user: string,
+  ) {
+    await this.projectService.storeYDoc(projectId, yDocUpdates);
+    return this.filesService.updateFileName({
+      fileId,
+      newName,
       user,
       snapshot,
     });
