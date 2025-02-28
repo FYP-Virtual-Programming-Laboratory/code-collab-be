@@ -42,4 +42,62 @@ export class DirectoryService {
       },
     });
   }
+
+  async renameDirectory(id: number, newName: string) {
+    const existingDirectory = await this.prisma.directory.findUnique({
+      where: { id },
+    });
+
+    if (!existingDirectory) {
+      throw new Error('Directory not found');
+    }
+
+    const splitPath = existingDirectory.path.split('/');
+    splitPath[splitPath.length - 1] = newName;
+    const newPath = splitPath.join('/');
+
+    return await this.prisma.directory.update({
+      where: { id },
+      data: { path: newPath },
+    });
+  }
+
+  async deleteDirectory(id: number) {
+    const directory = await this.prisma.directory.findUnique({
+      where: { id },
+    });
+
+    if (!directory) {
+      throw new Error('Directory not found');
+    }
+
+    // Delete all files and subdirectories within this directory
+    await this.prisma.file.deleteMany({
+      where: {
+        path: {
+          startsWith: directory.path,
+        },
+      },
+    });
+    await this.prisma.directory.deleteMany({
+      where: {
+        path: {
+          startsWith: directory.path,
+        },
+      },
+    });
+
+    // Finally, delete the directory itself
+    return await this.prisma.directory.delete({
+      where: { id },
+    });
+  }
+
+  async listDirectories(projectId: number) {
+    return await this.prisma.directory.findMany({
+      where: {
+        projectId,
+      },
+    });
+  }
 }

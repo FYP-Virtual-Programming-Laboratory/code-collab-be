@@ -9,11 +9,13 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { ProjectService } from 'src/project/project.service';
+import { DirectoryService } from '../directory/directory.service';
 import { DeleteFileArgs } from './dtos/delete-file.args';
 import { NewFileArgs } from './dtos/new-file.args';
-import { UpdateFileNameArgs } from './dtos/update-file-name.args';
+import { RenameFileArgs } from './dtos/update-file-name.args';
 import { UpdateFileArgs } from './dtos/update-file.args';
 import { FileService } from './file.service';
+import { FileSystemEntry } from './models/file-system-entry.model';
 import { File } from './models/file.model';
 import { Version } from './models/version.model';
 
@@ -22,6 +24,7 @@ export class FileResolver {
   constructor(
     private filesService: FileService,
     private projectService: ProjectService,
+    private dirService: DirectoryService,
   ) {}
 
   @ResolveField()
@@ -68,7 +71,7 @@ export class FileResolver {
   })
   async renameFile(
     @Args()
-    { fileId, newName, projectId, yDocUpdates, snapshot }: UpdateFileNameArgs,
+    { fileId, newName, projectId, yDocUpdates, snapshot }: RenameFileArgs,
     @Context('user') user: string,
   ) {
     await this.projectService.assertAccess(user, projectId);
@@ -81,16 +84,18 @@ export class FileResolver {
     });
   }
 
-  @Query(() => [File], {
+  @Query(() => [FileSystemEntry], {
     description:
-      'List all files in a project. Returns an empty array if no files are found or if project does not exist.',
+      'List all files and directories in a project. Returns an empty array if no files or directories are found or if project does not exist.',
   })
   async listFiles(
     @Args('projectId', { type: () => Int }) projectId: number,
     @Context('user') user: string,
   ) {
     await this.projectService.assertAccess(user, projectId);
-    return this.filesService.listFiles(projectId);
+    const files = await this.filesService.listFiles(projectId);
+    const directories = await this.dirService.listDirectories(projectId);
+    return [...directories, ...files];
   }
 
   @Query(() => [Version], {
