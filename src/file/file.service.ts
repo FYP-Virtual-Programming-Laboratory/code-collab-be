@@ -1,15 +1,43 @@
 import { Injectable } from '@nestjs/common';
+import { DirectoryService } from '../directory/directory.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class FileService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private dirService: DirectoryService,
+  ) {}
 
-  async createFile(
+  async getOrCreateFile(
     projectId: number,
     path: string,
     initialContent: string | null,
   ) {
+    const existingFile = await this.prisma.file.findUnique({
+      where: {
+        path,
+        projectId,
+      },
+    });
+
+    if (existingFile) {
+      return existingFile;
+    }
+
+    const splitPath = path.split('/');
+    let parentId: number | null = null;
+
+    if (splitPath.length > 1) {
+      // Create parent directory if it doesn't exist
+      const parentPath = splitPath.slice(0, -1).join('/');
+      const parentDirectory = await this.dirService.getOrCreateDirectory(
+        projectId,
+        parentPath,
+      );
+      parentId = parentDirectory.id;
+    }
+
     return await this.prisma.file.create({
       data: {
         path,
@@ -19,6 +47,7 @@ export class FileService {
             id: projectId,
           },
         },
+        parent: parentId ? { connect: { id: parentId } } : undefined,
       },
     });
   }
@@ -136,16 +165,16 @@ export class FileService {
     }
   }
 
-  async deleteFiles(fileIds: number[]) {
+  async deleteFile(fileId: number) {
     await this.prisma.version.deleteMany({
       where: {
-        fileId: { in: fileIds },
+        fileId: fileId,
       },
     });
 
-    return await this.prisma.file.deleteMany({
+    return await this.prisma.file.delete({
       where: {
-        id: { in: fileIds },
+        id: fileId,
       },
     });
   }

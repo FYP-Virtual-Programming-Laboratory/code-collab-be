@@ -1,15 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DirectoryService } from '../directory/directory.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { FileService } from './file.service';
 
 describe('FileService', () => {
   let service: FileService;
+  let dirService: DirectoryService;
   let prisma: PrismaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FileService,
+        DirectoryService,
         {
           provide: PrismaService,
           useValue: {
@@ -22,6 +25,7 @@ describe('FileService', () => {
 
     service = module.get<FileService>(FileService);
     prisma = module.get<PrismaService>(PrismaService);
+    dirService = module.get<DirectoryService>(DirectoryService);
   });
 
   it('should be defined', () => {
@@ -29,14 +33,64 @@ describe('FileService', () => {
   });
 
   it('should create a file', async () => {
-    const fileData = { id: 1, path: 'test/path', content: '', projectId: 1 };
+    const parentDirectory = {
+      id: 1,
+      path: 'test',
+      content: '',
+      isDir: true,
+      projectId: 1,
+    };
+    const fileData = { id: 2, path: 'test/path', content: '', projectId: 1 };
+    prisma.file.findUnique = jest.fn().mockResolvedValueOnce(null); // File does not exist
     prisma.file.create = jest.fn().mockResolvedValue(fileData as any);
+    dirService.getOrCreateDirectory = jest
+      .fn()
+      .mockResolvedValue(parentDirectory as any);
 
-    const result = await service.createFile(1, 'test/path', null);
+    const result = await service.getOrCreateFile(1, 'test/path', null);
     expect(result).toEqual(fileData);
     expect(prisma.file.create).toHaveBeenCalledWith({
       data: {
         path: 'test/path',
+        content: '',
+        project: {
+          connect: {
+            id: 1,
+          },
+        },
+        parent: {
+          connect: {
+            id: 1,
+          },
+        },
+      },
+    });
+  });
+
+  it('should return existing file if it exists', async () => {
+    const existingFile = { id: 1, path: 'test/path', content: '' };
+    prisma.file.findUnique = jest.fn().mockResolvedValue(existingFile);
+    prisma.file.create = jest.fn();
+    const result = await service.getOrCreateFile(1, 'test/path', null);
+    expect(result).toEqual(existingFile);
+    expect(prisma.file.findUnique).toHaveBeenCalledWith({
+      where: {
+        path: 'test/path',
+        projectId: 1,
+      },
+    });
+  });
+
+  it('should create a file without parent directory', async () => {
+    const fileData = { id: 1, path: 'path', content: '', projectId: 1 };
+    prisma.file.findUnique = jest.fn().mockResolvedValue(null);
+    prisma.file.create = jest.fn().mockResolvedValue(fileData as any);
+
+    const result = await service.getOrCreateFile(1, 'path', null);
+    expect(result).toEqual(fileData);
+    expect(prisma.file.create).toHaveBeenCalledWith({
+      data: {
+        path: 'path',
         content: '',
         project: {
           connect: {

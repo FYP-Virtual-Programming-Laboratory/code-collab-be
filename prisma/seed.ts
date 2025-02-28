@@ -45,16 +45,14 @@ async function main() {
     },
   });
 
-  const srcDir = await prisma.file.upsert({
+  const srcDir = await prisma.directory.upsert({
     where: {
       path: 'src',
     },
     update: {},
     create: {
       path: 'src',
-      content: '',
       projectId: project.id,
-      isDir: true,
     },
   });
   const fileMainJs = await prisma.file.upsert({

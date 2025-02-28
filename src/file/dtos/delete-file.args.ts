@@ -2,6 +2,6 @@ import { ArgsType, Field, Int } from '@nestjs/graphql';
 
 @ArgsType()
 export class DeleteFileArgs {
-  @Field(() => [Int])
-  fileIds: number[];
+  @Field(() => Int)
+  fileId: number;
 }

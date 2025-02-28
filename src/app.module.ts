@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { FileModule } from './file/file.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProjectModule } from './project/project.module';
+import { DirectoryModule } from './directory/directory.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ProjectModule } from './project/project.module';
     FileModule,
     PrismaModule,
     ProjectModule,
+    DirectoryModule,
   ],
   providers: [AppService],
 })

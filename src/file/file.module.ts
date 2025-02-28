@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ProjectModule } from 'src/project/project.module';
+import { DirectoryModule } from 'src/directory/directory.module';
+import { ProjectModule } from '../project/project.module';
 import { FileResolver } from './file.resolver';
 import { FileService } from './file.service';
 
 @Module({
-  imports: [ProjectModule],
+  imports: [DirectoryModule, ProjectModule],
   providers: [FileResolver, FileService],
 })
 export class FileModule {}

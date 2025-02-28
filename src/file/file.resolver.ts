@@ -33,7 +33,11 @@ export class FileResolver {
     description: 'Create a new file. Returns the new file',
   })
   async newFile(@Args() { filePath, projectId, initialContent }: NewFileArgs) {
-    return this.filesService.createFile(projectId, filePath, initialContent);
+    return this.filesService.getOrCreateFile(
+      projectId,
+      filePath,
+      initialContent,
+    );
   }
 
   @Mutation(() => File, {
@@ -98,7 +102,7 @@ export class FileResolver {
   @Mutation(() => File, {
     description: 'Delete a file by its id.',
   })
-  async deleteFiles(@Args() { fileIds }: DeleteFileArgs) {
-    return this.filesService.deleteFiles(fileIds);
+  async deleteFile(@Args() { fileId }: DeleteFileArgs) {
+    return this.filesService.deleteFile(fileId);
   }
 }
