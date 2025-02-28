@@ -52,7 +52,7 @@ export class FileService {
     });
   }
 
-  async updateFileName({
+  async renameFile({
     fileId,
     newName,
     snapshot,

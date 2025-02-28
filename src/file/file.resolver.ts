@@ -32,7 +32,11 @@ export class FileResolver {
   @Mutation(() => File, {
     description: 'Create a new file. Returns the new file',
   })
-  async newFile(@Args() { filePath, projectId, initialContent }: NewFileArgs) {
+  async newFile(
+    @Args() { filePath, projectId, initialContent }: NewFileArgs,
+    @Context('user') user: string,
+  ) {
+    await this.projectService.assertAccess(user, projectId);
     return this.filesService.getOrCreateFile(
       projectId,
       filePath,
@@ -49,6 +53,7 @@ export class FileResolver {
     { fileId, newContent, projectId, yDocUpdates, snapshot }: UpdateFileArgs,
     @Context('user') user: string,
   ) {
+    await this.projectService.assertAccess(user, projectId);
     await this.projectService.storeYDoc(projectId, yDocUpdates);
     return this.filesService.updateFile({
       fileId,
@@ -61,13 +66,14 @@ export class FileResolver {
   @Mutation(() => File, {
     description: "Update a file's name. Returns the file.",
   })
-  async updateFileName(
+  async renameFile(
     @Args()
     { fileId, newName, projectId, yDocUpdates, snapshot }: UpdateFileNameArgs,
     @Context('user') user: string,
   ) {
+    await this.projectService.assertAccess(user, projectId);
     await this.projectService.storeYDoc(projectId, yDocUpdates);
-    return this.filesService.updateFileName({
+    return this.filesService.renameFile({
       fileId,
       newName,
       user,
@@ -79,7 +85,11 @@ export class FileResolver {
     description:
       'List all files in a project. Returns an empty array if no files are found or if project does not exist.',
   })
-  async listFiles(@Args('projectId', { type: () => Int }) projectId: number) {
+  async listFiles(
+    @Args('projectId', { type: () => Int }) projectId: number,
+    @Context('user') user: string,
+  ) {
+    await this.projectService.assertAccess(user, projectId);
     return this.filesService.listFiles(projectId);
   }
 

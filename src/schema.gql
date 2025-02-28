@@ -91,7 +91,7 @@ type Mutation {
   ): File!
 
   """Update a file's name. Returns the file."""
-  updateFileName(
+  renameFile(
     fileId: Int!
     newName: String!
     projectId: Int!
