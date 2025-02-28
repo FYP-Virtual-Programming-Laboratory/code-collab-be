@@ -52,33 +52,10 @@ export class FileService {
     });
   }
 
-  async renameFile({
-    fileId,
-    newName,
-    snapshot,
-    user,
-  }: {
-    fileId: number;
-    newName: string;
-    snapshot: string;
-    user: string;
-  }) {
+  async renameFile({ fileId, newName }: { fileId: number; newName: string }) {
     const file = await this.prisma.file.findUnique({
       where: {
         id: fileId,
-      },
-    });
-
-    // Create a version
-    await this.prisma.version.create({
-      data: {
-        snapshot,
-        committedBy: user,
-        file: {
-          connect: {
-            id: fileId,
-          },
-        },
       },
     });
 

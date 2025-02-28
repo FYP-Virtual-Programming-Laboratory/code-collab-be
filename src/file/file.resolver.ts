@@ -12,7 +12,7 @@ import { ProjectService } from 'src/project/project.service';
 import { DirectoryService } from '../directory/directory.service';
 import { DeleteFileArgs } from './dtos/delete-file.args';
 import { NewFileArgs } from './dtos/new-file.args';
-import { RenameFileArgs } from './dtos/update-file-name.args';
+import { RenameFileArgs } from './dtos/rename-file.args';
 import { UpdateFileArgs } from './dtos/update-file.args';
 import { FileService } from './file.service';
 import { FileSystemEntry } from './models/file-system-entry.model';
@@ -71,16 +71,11 @@ export class FileResolver {
   })
   async renameFile(
     @Args()
-    { fileId, newName, projectId, yDocUpdates, snapshot }: RenameFileArgs,
-    @Context('user') user: string,
+    { fileId, newName }: RenameFileArgs,
   ) {
-    await this.projectService.assertAccess(user, projectId);
-    await this.projectService.storeYDoc(projectId, yDocUpdates);
     return this.filesService.renameFile({
       fileId,
       newName,
-      user,
-      snapshot,
     });
   }
 
