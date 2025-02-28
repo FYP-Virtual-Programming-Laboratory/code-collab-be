@@ -104,7 +104,7 @@ type Mutation {
   ): File!
 
   """Delete a file by its id."""
-  deleteFile(fileId: Int!): File!
+  deleteFiles(fileIds: [Int!]!): File!
 
   """Create a new project."""
   createProject(

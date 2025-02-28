@@ -136,16 +136,16 @@ export class FileService {
     }
   }
 
-  async deleteFile(fileId: number) {
+  async deleteFiles(fileIds: number[]) {
     await this.prisma.version.deleteMany({
       where: {
-        fileId,
+        fileId: { in: fileIds },
       },
     });
 
-    return await this.prisma.file.delete({
+    return await this.prisma.file.deleteMany({
       where: {
-        id: fileId,
+        id: { in: fileIds },
       },
     });
   }

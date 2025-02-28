@@ -98,7 +98,7 @@ export class FileResolver {
   @Mutation(() => File, {
     description: 'Delete a file by its id.',
   })
-  async deleteFile(@Args() { fileId }: DeleteFileArgs) {
-    return this.filesService.deleteFile(fileId);
+  async deleteFiles(@Args() { fileIds }: DeleteFileArgs) {
+    return this.filesService.deleteFiles(fileIds);
   }
 }
