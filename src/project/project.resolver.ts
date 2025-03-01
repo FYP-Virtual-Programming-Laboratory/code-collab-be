@@ -11,6 +11,7 @@ import {
 import { GraphQLError } from 'graphql';
 import { CreateProjectArgs } from './dtos/create-project.args';
 import { UpdateProjectArgs } from './dtos/update-project.args';
+import { Contributions } from './models/contributions';
 import { Project } from './models/project.model';
 import { ProjectService } from './project.service';
 
@@ -18,7 +19,7 @@ import { ProjectService } from './project.service';
 export class ProjectResolver {
   constructor(private projectService: ProjectService) {}
 
-  @ResolveField()
+  @ResolveField(() => Contributions)
   async contributions(@Parent() project: Project) {
     return this.projectService.getContributions(project.id);
   }

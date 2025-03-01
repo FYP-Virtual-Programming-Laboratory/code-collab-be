@@ -114,7 +114,7 @@ export class ProjectService {
 
     return {
       contributors: Object.keys(contributions),
-      contributions: Array.from(Object.entries(contributions)).map(
+      contributionStats: Array.from(Object.entries(contributions)).map(
         ([contributor, contributions]) => ({ contributor, contributions }),
       ),
     };
