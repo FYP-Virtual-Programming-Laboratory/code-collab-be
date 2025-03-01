@@ -26,7 +26,7 @@ export class FileService {
     }
 
     const splitPath = path.split('/');
-    let parentId: number | null = null;
+    let parentId: string | null = null;
 
     if (splitPath.length > 1) {
       // Create parent directory if it doesn't exist
@@ -52,7 +52,7 @@ export class FileService {
     });
   }
 
-  async renameFile({ fileId, newName }: { fileId: number; newName: string }) {
+  async renameFile({ fileId, newName }: { fileId: string; newName: string }) {
     const file = await this.prisma.file.findUnique({
       where: {
         id: fileId,
@@ -78,7 +78,7 @@ export class FileService {
     snapshot,
     user,
   }: {
-    fileId: number;
+    fileId: string;
     newContent: string;
     snapshot: string;
     user: string;
@@ -115,7 +115,7 @@ export class FileService {
     return files;
   }
 
-  async getFileHistory(fileId: number) {
+  async getFileHistory(fileId: string) {
     const versions = await this.prisma.version.findMany({
       where: {
         fileId,
@@ -128,7 +128,7 @@ export class FileService {
     return versions;
   }
 
-  async getFile(fileId: number) {
+  async getFile(fileId: string) {
     try {
       const file = await this.prisma.file.findUnique({
         where: {
@@ -142,7 +142,7 @@ export class FileService {
     }
   }
 
-  async deleteFile(fileId: number) {
+  async deleteFile(fileId: string) {
     await this.prisma.version.deleteMany({
       where: {
         fileId: fileId,

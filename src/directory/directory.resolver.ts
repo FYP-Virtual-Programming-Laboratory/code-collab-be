@@ -1,4 +1,4 @@
-import { Args, Context, Int, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { ProjectService } from '../project/project.service';
 import { DirectoryService } from './directory.service';
 import { CreateDirectoryArgs } from './dto/create-directory.args';
@@ -22,7 +22,7 @@ export class DirectoryResolver {
   }
 
   @Mutation(() => Directory)
-  async deleteDirectory(@Args('id', { type: () => Int }) id: number) {
+  async deleteDirectory(@Args('id') id: string) {
     return await this.dirService.deleteDirectory(id);
   }
 

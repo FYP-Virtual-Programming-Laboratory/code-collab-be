@@ -1,15 +1,15 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Directory {
-  @Field(() => Int)
-  id: number;
+  @Field()
+  id: string;
 
   @Field()
   path: string;
 
-  @Field(() => Int, { nullable: true })
-  parentId: number;
+  @Field({ nullable: true })
+  parentId: string;
 
   @Field((type) => Date)
   createdAt: Date;

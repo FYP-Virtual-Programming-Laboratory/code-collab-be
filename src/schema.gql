@@ -29,18 +29,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Directory {
-  id: Int!
+  id: String!
   path: String!
-  parentId: Int
+  parentId: String
   createdAt: DateTime!
   lastModified: DateTime!
 }
 
 type File {
-  id: Int!
+  id: String!
   path: String!
   content: String!
-  parentId: Int
+  parentId: String
 
   """File size in bytes"""
   size: Int
@@ -64,10 +64,10 @@ type Query {
   """
   Get all versions of a file by file `id`. Returns an empty array if file with the id does not exist.
   """
-  getFileVersions(fileId: Int!): [Version!]!
+  getFileVersions(fileId: String!): [Version!]!
 
   """Get a file by its id."""
-  getFile(fileId: Int!): File
+  getFile(fileId: String!): File
 
   """
   Find a project by its `id`. If `null` is returned, then the project could not be found.
@@ -91,7 +91,7 @@ type Mutation {
   Update a file's content and create a version for the file. Returns the file.
   """
   updateFile(
-    fileId: Int!
+    fileId: String!
     newContent: String!
     projectId: Int!
 
@@ -103,13 +103,13 @@ type Mutation {
   ): File!
 
   """Update a file's name. Returns the file."""
-  renameFile(fileId: Int!, newName: String!): File!
+  renameFile(fileId: String!, newName: String!): File!
 
   """Delete a file by its id."""
-  deleteFile(fileId: Int!): File!
+  deleteFile(fileId: String!): File!
   getOrCreateDirectory(projectId: Int!, path: String!): Directory!
-  deleteDirectory(id: Int!): Directory!
-  renameDirectory(id: Int!, newName: String!): Directory!
+  deleteDirectory(id: String!): Directory!
+  renameDirectory(id: String!, newName: String!): Directory!
 
   """Create a new project."""
   createProject(

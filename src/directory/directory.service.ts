@@ -18,7 +18,7 @@ export class DirectoryService {
     }
 
     const splitPath = path.split('/');
-    let parentId: number | null = null;
+    let parentId: string | null = null;
 
     if (splitPath.length > 1) {
       // Create parent directory if it doesn't exist
@@ -43,7 +43,7 @@ export class DirectoryService {
     });
   }
 
-  async renameDirectory(id: number, newName: string) {
+  async renameDirectory(id: string, newName: string) {
     const existingDirectory = await this.prisma.directory.findUnique({
       where: { id },
     });
@@ -62,7 +62,7 @@ export class DirectoryService {
     });
   }
 
-  async deleteDirectory(id: number) {
+  async deleteDirectory(id: string) {
     const directory = await this.prisma.directory.findUnique({
       where: { id },
     });

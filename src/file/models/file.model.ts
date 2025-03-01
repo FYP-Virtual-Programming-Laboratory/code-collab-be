@@ -2,8 +2,8 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class File {
-  @Field(() => Int)
-  id: number;
+  @Field()
+  id: string;
 
   @Field()
   path: string;
@@ -11,8 +11,8 @@ export class File {
   @Field()
   content: string;
 
-  @Field(() => Int, { nullable: true })
-  parentId: number;
+  @Field({ nullable: true })
+  parentId: string;
 
   @Field(() => Int, {
     description: 'File size in bytes',

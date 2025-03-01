@@ -26,7 +26,7 @@ describe('DirectoryService', () => {
 
   it('should create a directory', async () => {
     const directoryData = {
-      id: 1,
+      id: '1',
       path: 'test',
       projectId: 1,
     };
@@ -56,7 +56,7 @@ describe('DirectoryService', () => {
 
   it('should return existing directory if it exists', async () => {
     const existingDirectory = {
-      id: 1,
+      id: '1',
       path: 'test/path',
       projectId: 1,
     };
@@ -78,7 +78,7 @@ describe('DirectoryService', () => {
 
   it('should create parent directories if they do not exist', async () => {
     const parentDirectoryData = {
-      id: 1,
+      id: '1',
       path: 'test',
       projectId: 1,
     };
@@ -124,14 +124,14 @@ describe('DirectoryService', () => {
             id: 1,
           },
         },
-        parent: { connect: { id: 1 } },
+        parent: { connect: { id: '1' } },
       },
     });
   });
 
   it('should rename a directory', async () => {
     const existingDirectory = {
-      id: 1,
+      id: '1',
       path: 'test/oldName',
       projectId: 1,
     };
@@ -144,20 +144,20 @@ describe('DirectoryService', () => {
       .mockResolvedValue(existingDirectory);
     prisma.directory.update = jest.fn().mockResolvedValue(updatedDirectory);
 
-    const result = await service.renameDirectory(1, 'newName');
+    const result = await service.renameDirectory('1', 'newName');
     expect(result).toEqual(updatedDirectory);
     expect(prisma.directory.findUnique).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { id: '1' },
     });
     expect(prisma.directory.update).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { id: '1' },
       data: { path: 'test/newName' },
     });
   });
 
   it('should delete a directory and its contents', async () => {
     const directory = {
-      id: 1,
+      id: '1',
       path: 'test/path',
       projectId: 1,
     };
@@ -166,10 +166,10 @@ describe('DirectoryService', () => {
     prisma.directory.deleteMany = jest.fn().mockResolvedValue({ count: 1 });
     prisma.directory.delete = jest.fn().mockResolvedValue(directory);
 
-    const result = await service.deleteDirectory(1);
+    const result = await service.deleteDirectory('1');
     expect(result).toEqual(directory);
     expect(prisma.directory.findUnique).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { id: '1' },
     });
     expect(prisma.file.deleteMany).toHaveBeenCalledWith({
       where: {
@@ -186,7 +186,7 @@ describe('DirectoryService', () => {
       },
     });
     expect(prisma.directory.delete).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { id: '1' },
     });
   });
 
@@ -196,11 +196,11 @@ describe('DirectoryService', () => {
     prisma.directory.deleteMany = jest.fn();
     prisma.directory.delete = jest.fn();
 
-    await expect(service.deleteDirectory(1)).rejects.toThrow(
+    await expect(service.deleteDirectory('1')).rejects.toThrow(
       'Directory not found',
     );
     expect(prisma.directory.findUnique).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { id: '1' },
     });
     expect(prisma.file.deleteMany).not.toHaveBeenCalled();
     expect(prisma.directory.deleteMany).not.toHaveBeenCalled();

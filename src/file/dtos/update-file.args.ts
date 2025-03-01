@@ -2,8 +2,8 @@ import { ArgsType, Field, Int } from '@nestjs/graphql';
 
 @ArgsType()
 export class UpdateFileArgs {
-  @Field(() => Int)
-  fileId: number;
+  @Field()
+  fileId: string;
 
   @Field()
   newContent: string;

@@ -34,13 +34,13 @@ describe('FileService', () => {
 
   it('should create a file', async () => {
     const parentDirectory = {
-      id: 1,
+      id: '1',
       path: 'test',
       content: '',
       isDir: true,
       projectId: 1,
     };
-    const fileData = { id: 2, path: 'test/path', content: '', projectId: 1 };
+    const fileData = { id: '2', path: 'test/path', content: '', projectId: 1 };
     prisma.file.findUnique = jest.fn().mockResolvedValueOnce(null); // File does not exist
     prisma.file.create = jest.fn().mockResolvedValue(fileData as any);
     dirService.getOrCreateDirectory = jest
@@ -60,7 +60,7 @@ describe('FileService', () => {
         },
         parent: {
           connect: {
-            id: 1,
+            id: '1',
           },
         },
       },
@@ -68,7 +68,7 @@ describe('FileService', () => {
   });
 
   it('should return existing file if it exists', async () => {
-    const existingFile = { id: 1, path: 'test/path', content: '' };
+    const existingFile = { id: '1', path: 'test/path', content: '' };
     prisma.file.findUnique = jest.fn().mockResolvedValue(existingFile);
     prisma.file.create = jest.fn();
     const result = await service.getOrCreateFile(1, 'test/path', null);
@@ -82,7 +82,7 @@ describe('FileService', () => {
   });
 
   it('should create a file without parent directory', async () => {
-    const fileData = { id: 1, path: 'path', content: '', projectId: 1 };
+    const fileData = { id: '1', path: 'path', content: '', projectId: 1 };
     prisma.file.findUnique = jest.fn().mockResolvedValue(null);
     prisma.file.create = jest.fn().mockResolvedValue(fileData as any);
 
@@ -102,12 +102,12 @@ describe('FileService', () => {
   });
 
   it('should update a file', async () => {
-    const fileData = { id: 1, path: 'test/path', content: 'new content' };
+    const fileData = { id: '1', path: 'test/path', content: 'new content' };
     prisma.file.update = jest.fn().mockResolvedValue(fileData as any);
     prisma.version.create = jest.fn().mockResolvedValue({});
 
     const result = await service.updateFile({
-      fileId: 1,
+      fileId: '1',
       newContent: 'new content',
       snapshot: 'snapshot',
       user: 'user',
@@ -119,14 +119,14 @@ describe('FileService', () => {
         committedBy: 'user',
         file: {
           connect: {
-            id: 1,
+            id: '1',
           },
         },
       },
     });
     expect(prisma.file.update).toHaveBeenCalledWith({
       where: {
-        id: 1,
+        id: '1',
       },
       data: {
         content: 'new content',
@@ -135,7 +135,7 @@ describe('FileService', () => {
   });
 
   it('should list files', async () => {
-    const files = [{ id: 1, path: 'test/path', content: '', projectId: 1 }];
+    const files = [{ id: '1', path: 'test/path', content: '', projectId: 1 }];
     prisma.file.findMany = jest.fn().mockResolvedValue(files);
 
     const result = await service.listFiles(1);
@@ -149,15 +149,15 @@ describe('FileService', () => {
 
   it('should get file history', async () => {
     const versions = [
-      { id: 1, snapshot: 'snapshot', committedBy: 'user', fileId: 1 },
+      { id: 1, snapshot: 'snapshot', committedBy: 'user', fileId: '1' },
     ];
     prisma.version.findMany = jest.fn().mockResolvedValue(versions);
 
-    const result = await service.getFileHistory(1);
+    const result = await service.getFileHistory('1');
     expect(result).toEqual(versions);
     expect(prisma.version.findMany).toHaveBeenCalledWith({
       where: {
-        fileId: 1,
+        fileId: '1',
       },
       orderBy: {
         createdAt: 'desc',
@@ -166,14 +166,14 @@ describe('FileService', () => {
   });
 
   it('should get a file', async () => {
-    const file = { id: 1, path: 'test/path', content: '' };
+    const file = { id: '1', path: 'test/path', content: '' };
     prisma.file.findUnique = jest.fn().mockResolvedValue(file);
 
-    const result = await service.getFile(1);
+    const result = await service.getFile('1');
     expect(result).toEqual(file);
     expect(prisma.file.findUnique).toHaveBeenCalledWith({
       where: {
-        id: 1,
+        id: '1',
       },
     });
   });
@@ -181,11 +181,11 @@ describe('FileService', () => {
   it('should return null if file not found', async () => {
     prisma.file.findUnique = jest.fn().mockResolvedValue(null);
 
-    const result = await service.getFile(1);
+    const result = await service.getFile('1');
     expect(result).toBeNull();
     expect(prisma.file.findUnique).toHaveBeenCalledWith({
       where: {
-        id: 1,
+        id: '1',
       },
     });
   });

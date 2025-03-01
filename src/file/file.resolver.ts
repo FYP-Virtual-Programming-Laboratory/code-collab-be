@@ -97,7 +97,7 @@ export class FileResolver {
     description:
       'Get all versions of a file by file `id`. Returns an empty array if file with the id does not exist.',
   })
-  async getFileVersions(@Args('fileId', { type: () => Int }) fileId: number) {
+  async getFileVersions(@Args('fileId') fileId: string) {
     return this.filesService.getFileHistory(fileId);
   }
 
@@ -105,7 +105,7 @@ export class FileResolver {
     nullable: true,
     description: 'Get a file by its id.',
   })
-  async getFile(@Args('fileId', { type: () => Int }) fileId: number) {
+  async getFile(@Args('fileId') fileId: string) {
     return this.filesService.getFile(fileId);
   }
 

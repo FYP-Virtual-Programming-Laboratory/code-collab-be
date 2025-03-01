@@ -1,9 +1,9 @@
-import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { ArgsType, Field } from '@nestjs/graphql';
 
 @ArgsType()
 export class RenameDirectoryArgs {
-  @Field(() => Int)
-  id: number;
+  @Field()
+  id: string;
 
   @Field()
   newName: string;
