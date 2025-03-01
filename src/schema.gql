@@ -108,7 +108,7 @@ type Mutation {
   """Delete a file by its id."""
   deleteFile(fileId: Int!): File!
   getOrCreateDirectory(projectId: Int!, path: String!): Directory!
-  deleteDirectory(id: Float!): Directory!
+  deleteDirectory(id: Int!): Directory!
   renameDirectory(id: Int!, newName: String!): Directory!
 
   """Create a new project."""
