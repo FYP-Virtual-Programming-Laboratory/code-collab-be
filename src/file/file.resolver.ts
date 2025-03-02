@@ -10,6 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { ProjectService } from 'src/project/project.service';
 import { DirectoryService } from '../directory/directory.service';
+import { ProjectResolver } from '../project/project.resolver';
 import { DeleteFileArgs } from './dtos/delete-file.args';
 import { NewFileArgs } from './dtos/new-file.args';
 import { RenameFileArgs } from './dtos/rename-file.args';
@@ -25,6 +26,7 @@ export class FileResolver {
     private filesService: FileService,
     private projectService: ProjectService,
     private dirService: DirectoryService,
+    private projectResolver: ProjectResolver,
   ) {}
 
   @ResolveField()
@@ -39,7 +41,7 @@ export class FileResolver {
     @Args() { filePath, projectId, initialContent }: NewFileArgs,
     @Context('user') user: string,
   ) {
-    await this.projectService.assertAccess(user, projectId);
+    await this.projectResolver.assertAccess(user, projectId);
     return this.filesService.getOrCreateFile(
       projectId,
       filePath,
@@ -56,7 +58,7 @@ export class FileResolver {
     { fileId, newContent, projectId, yDocUpdates, snapshot }: UpdateFileArgs,
     @Context('user') user: string,
   ) {
-    await this.projectService.assertAccess(user, projectId);
+    await this.projectResolver.assertAccess(user, projectId);
     await this.projectService.storeYDoc(projectId, yDocUpdates);
     return this.filesService.updateFile({
       fileId,
@@ -87,7 +89,7 @@ export class FileResolver {
     @Args('projectId', { type: () => Int }) projectId: number,
     @Context('user') user: string,
   ) {
-    await this.projectService.assertAccess(user, projectId);
+    await this.projectResolver.assertAccess(user, projectId);
     const files = await this.filesService.listFiles(projectId);
     const directories = await this.dirService.listDirectories(projectId);
     return [...directories, ...files];

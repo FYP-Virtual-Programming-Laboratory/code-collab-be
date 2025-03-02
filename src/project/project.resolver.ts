@@ -19,6 +19,38 @@ import { ProjectService } from './project.service';
 export class ProjectResolver {
   constructor(private projectService: ProjectService) {}
 
+  async assertAccess(user: string, projectOrSessionId: number | string) {
+    const project = this.projectService.getProjectWithMember(
+      projectOrSessionId,
+      user,
+    );
+
+    if (!project) {
+      throw new GraphQLError('Unauthorized to access project', {
+        extensions: {
+          code: 'UNAUTHORIZED',
+          description: 'You do not have access to this project.',
+        },
+      });
+    }
+  }
+
+  async assertOwner(user: string, projectOrSessionId: number | string) {
+    const project = await this.projectService.getProjectWithOwner(
+      projectOrSessionId,
+      user,
+    );
+
+    if (!project || project.createdBy !== user) {
+      throw new GraphQLError('Unauthorized to update project', {
+        extensions: {
+          code: 'UNAUTHORIZED',
+          description: 'You do not have access to update this project.',
+        },
+      });
+    }
+  }
+
   @ResolveField(() => Contributions)
   async contributions(@Parent() project: Project) {
     return this.projectService.getContributions(project.id);
@@ -33,7 +65,7 @@ export class ProjectResolver {
     @Args('id', { type: () => Int }) id: number,
     @Context('user') user: string,
   ) {
-    this.projectService.assertAccess(user, id);
+    this.assertAccess(user, id);
     return this.projectService.findProjectById(id);
   }
 
@@ -46,7 +78,7 @@ export class ProjectResolver {
     @Args('sessionId') sessionId: string,
     @Context('user') user: string,
   ) {
-    this.projectService.assertAccess(user, sessionId);
+    this.assertAccess(user, sessionId);
     return this.projectService.getProjectBySessionId(sessionId);
   }
 
@@ -73,8 +105,8 @@ export class ProjectResolver {
       });
     }
 
-    this.projectService.assertAccess(user, id || sessionId);
-    this.projectService.assertOwner(user, id || sessionId);
+    this.assertAccess(user, id || sessionId);
+    this.assertOwner(user, id || sessionId);
     return this.projectService.updateProject(id || sessionId, { name });
   }
 
@@ -84,8 +116,8 @@ export class ProjectResolver {
     @Args('user') user: string,
     @Context('user') currentUser: string,
   ) {
-    this.projectService.assertAccess(currentUser, projectId);
-    this.projectService.assertOwner(currentUser, projectId);
+    this.assertAccess(currentUser, projectId);
+    this.assertOwner(currentUser, projectId);
     return this.projectService.addMember(projectId, user);
   }
 
@@ -95,8 +127,8 @@ export class ProjectResolver {
     @Args('user') user: string,
     @Context('user') currentUser: string,
   ) {
-    this.projectService.assertAccess(currentUser, projectId);
-    this.projectService.assertOwner(currentUser, projectId);
+    this.assertAccess(currentUser, projectId);
+    this.assertOwner(currentUser, projectId);
     return this.projectService.removeMember(projectId, user);
   }
 
@@ -110,7 +142,7 @@ export class ProjectResolver {
     @Context('user') user: string,
   ) {
     try {
-      this.projectService.assertAccess(user, projectId);
+      this.assertAccess(user, projectId);
       await this.projectService.storeYDoc(projectId, doc);
 
       return true;

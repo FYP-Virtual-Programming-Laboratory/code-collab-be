@@ -8,6 +8,9 @@ export class Version {
   @Field()
   snapshot: string;
 
+  @Field()
+  fileId: string;
+
   @Field(() => Date)
   createdAt: Date;
 

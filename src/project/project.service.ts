@@ -7,7 +7,10 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
-  async assertAccess(user: string, projectOrSessionId: number | string) {
+  async getProjectWithMember(
+    projectOrSessionId: string | number,
+    member: string,
+  ) {
     const project = await this.prisma.project.findFirst({
       where: {
         OR: [
@@ -26,23 +29,19 @@ export class ProjectService {
         ],
         projectMemberships: {
           some: {
-            user,
+            user: member,
           },
         },
       },
     });
 
-    if (!project) {
-      throw new GraphQLError('Unauthorized to access project', {
-        extensions: {
-          code: 'UNAUTHORIZED',
-          description: 'You do not have access to this project.',
-        },
-      });
-    }
+    return project;
   }
 
-  async assertOwner(user: string, projectOrSessionId: number | string) {
+  async getProjectWithOwner(
+    projectOrSessionId: string | number,
+    owner: string,
+  ) {
     const project = await this.prisma.project.findFirst({
       where: {
         OR: [
@@ -62,14 +61,7 @@ export class ProjectService {
       },
     });
 
-    if (!project || project.createdBy !== user) {
-      throw new GraphQLError('Unauthorized to update project', {
-        extensions: {
-          code: 'UNAUTHORIZED',
-          description: 'You do not have access to update this project.',
-        },
-      });
-    }
+    return project;
   }
 
   async getProjectBySessionId(sessionId: string) {

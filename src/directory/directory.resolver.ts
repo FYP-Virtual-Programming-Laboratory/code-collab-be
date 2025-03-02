@@ -1,5 +1,5 @@
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-import { ProjectService } from '../project/project.service';
+import { ProjectResolver } from '../project/project.resolver';
 import { DirectoryService } from './directory.service';
 import { CreateDirectoryArgs } from './dto/create-directory.args';
 import { RenameDirectoryArgs } from './dto/rename-directory.args';
@@ -9,7 +9,7 @@ import { Directory } from './models/directory.model';
 export class DirectoryResolver {
   constructor(
     private dirService: DirectoryService,
-    private projectService: ProjectService,
+    private projectResolver: ProjectResolver,
   ) {}
 
   @Mutation(() => Directory)
@@ -17,7 +17,7 @@ export class DirectoryResolver {
     @Args() { projectId, path }: CreateDirectoryArgs,
     @Context('user') user: string,
   ) {
-    await this.projectService.assertAccess(user, projectId);
+    await this.projectResolver.assertAccess(user, projectId);
     return this.dirService.getOrCreateDirectory(projectId, path);
   }
 

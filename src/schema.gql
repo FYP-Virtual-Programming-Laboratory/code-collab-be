@@ -51,6 +51,7 @@ type File {
 type Version {
   id: Int!
   snapshot: String!
+  fileId: String!
   createdAt: DateTime!
   committedBy: String!
 }
