@@ -105,7 +105,7 @@ export class ProjectService {
       .toJSON() as Record<string, number>;
 
     return {
-      contributors: Object.keys(contributions),
+      contributors: project.members,
       contributionStats: Array.from(Object.entries(contributions)).map(
         ([contributor, contributions]) => ({ contributor, contributions }),
       ),
