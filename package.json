@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:app": "concurrently \"pnpm start\" \"pnpm start:webrtc\" \"pnpm start:websocket\"",
+    "start:app": "pnpm prisma migrate dev && concurrently \"pnpm start\" \"pnpm start:webrtc\" \"pnpm start:websocket\"",
     "start:dev": "nest start --watch",
     "start:dev:app": "concurrently \"pnpm start:dev\" \"pnpm start:webrtc\" \"pnpm start:websocket\"",
     "start:debug": "nest start --debug --watch",
