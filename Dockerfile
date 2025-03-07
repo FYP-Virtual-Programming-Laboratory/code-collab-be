@@ -13,10 +13,8 @@ RUN chmod +x ./start_script.sh
 RUN pnpm exec prisma generate
 RUN pnpm run build
 
-EXPOSE 3000
-EXPOSE 1234
-EXPOSE 4444
+RUN pnpm -g add pm2
 
-ENV DATABASE_URL=file:./database.db
+EXPOSE 80 1234 4444
 
-CMD [ "pnpm", "start:app" ]
+CMD ["pm2-runtime", "ecosystem.config.js"]
